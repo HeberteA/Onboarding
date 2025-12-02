@@ -1,91 +1,136 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-from utils.styles import apply_custom_styles
-from services.data_manager import data_manager
-from views import dashboard, editor, reports
+from services.data_manager import DataManager
+import os
 
-st.set_page_config(page_title="Command Center", page_icon="Lavie1.png", layout="wide")
-apply_custom_styles()
+from views.dashboard import render_dashboard
+from views.management import render_management
+from views.settings import render_settings
+
+st.set_page_config(page_title="Lavie Onboarding", layout="wide", initial_sidebar_state="expanded", page_icon="Lavie1.png")
+
+st.markdown("""
+<style> 
+    /* Variáveis */
+    :root { --primary: #8B5CF6; --bg-dark: #0F172A; }
+    
+    /* Global App */
+    .stApp { 
+        background: radial-gradient(circle at 10% 20%, #3b3b3b 0%, #000000 100%);
+        font-family: 'Inter', sans-serif;
+        color: #ffffff;
+    }
+    .block-container { padding-top: 1.5rem; }
+
+    /* SIDEBAR STYLING - REMOVENDO O PADRÃO */
+    section[data-testid="stSidebar"] {
+        background-color: #020617; /* Slate-950 (Mais escuro que o fundo) */
+        border-right: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    /* Logo Area */
+    .sidebar-logo-container {
+        text-align: center;
+        padding: 20px 0;
+        margin-bottom: 20px;
+    }
+    .sidebar-logo-text {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: white;
+        letter-spacing: 2px;
+    }
+    .sidebar-logo-sub {
+        font-size: 0.7rem;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+    }
+
+    /* Option Menu Customization */
+    .nav-link {
+        border-radius: 8px !important;
+        margin-bottom: 5px !important;
+        font-size: 0.95rem !important;
+        font-weight: 500 !important;
+    }
+    .nav-link:hover {
+        background: radial-gradient(circle at 10% 20%, #3b3b3b 0%, #000000 100%);
+        font-family: 'Inter', sans-serif;
+        color: #ffffff;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 def main():
+    dm = DataManager()
+
     with st.sidebar:
-        st.image("Lavie.png")
-        st.markdown("""
-        <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 20px;">
-            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #E37026 0%, #ca5a15 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; box-shadow: 0 4px 10px rgba(227, 112, 38, 0.3);">CC</div>
-            <div>
-                <div style="font-weight: 700; color: white; font-size: 16px;">Command Center</div>
-                <div style="font-size: 11px; color: rgba(255,255,255,0.5);">Gestão de Obras</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        if os.path.exists("logo.png"):
+            st.image("Lavie.png", width=120)
+        else:
+            st.markdown("""
+                <div class="sidebar-logo-container">
+                    <div class="sidebar-logo-text">LAVIE</div>
+                    <div class="sidebar-logo-sub">CONSTRUÇÕES</div>
+                </div>
+            """, unsafe_allow_html=True)
         
-        selected = option_menu(
+        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+
+        projects = dm.get_projects()
+        if projects.empty:
+            st.error("Sem projetos. Rode o script de importação.")
+            return
+
+        proj_dict = dict(zip(projects['id'], projects['name']))
+        
+        if 'selected_project_id' not in st.session_state:
+            st.session_state['selected_project_id'] = projects['id'].iloc[0]
+        
+        if st.session_state['selected_project_id'] not in proj_dict:
+            st.session_state['selected_project_id'] = projects['id'].iloc[0]
+
+        st.caption("OBRA ATIVA")
+        pid = st.selectbox(
+            "Selecione a Obra",
+            options=list(proj_dict.keys()),
+            format_func=lambda x: proj_dict[x],
+            index=list(proj_dict.keys()).index(st.session_state['selected_project_id']),
+            label_visibility="collapsed"
+        )
+        st.session_state['selected_project_id'] = pid
+        
+        st.markdown("---")
+        
+        menu = option_menu(
             menu_title=None,
-            options=["Visão Geral", "Lançamentos", "Relatórios"],
-            icons=["grid-fill", "pencil-square", "file-earmark-bar-graph"],
-            menu_icon="cast",
+            options=["Dashboard", "Gestão", "Configurações"],
+            icons=["grid-fill", "kanban", "gear-fill"], 
             default_index=0,
             styles={
-                "container": {"padding": "0!important", "background": "transparent"},
-                "icon": {"color": "#E37026", "font-size": "14px"}, 
-                "nav-link": {
-                    "font-size": "14px", 
-                    "text-align": "left", 
-                    "margin": "0px 0px 5px 0px", 
-                    "padding": "10px 15px",
-                    "border-radius": "8px",
-                    "color": "rgba(255,255,255,0.7)"
-                },
-                "nav-link-selected": {
-                    "background-color": "rgba(255,255,255,0.1)", 
-                    "color": "white", 
-                    "font-weight": "600", 
-                    "border-left": "3px solid #E37026"
-                },
+                "container": {"padding": "0!important", "background-color": "transparent"},
+                "icon": {"color": "#94a3b8", "font-size": "18px"}, 
+                "nav-link": {"color": "#cbd5e1", "text-align": "left", "margin":"5px"},
+                "nav-link-selected": {"background-color": "var(--primary)", "color": "white", "box-shadow": "0 4px 6px -1px rgba(0,0,0,0.1)"},
             }
         )
         
-        st.markdown("<div style='flex-grow:1'></div>", unsafe_allow_html=True)
-        status_color = "#10b981" if data_manager.engine else "#ef4444"
-        status_txt = "POSTGRES ONLINE" if data_manager.engine else "DB ERROR"
-        
-        st.markdown(f"""
-        <div style="margin-top: auto; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-size: 11px; color: rgba(255,255,255,0.5);">Status</span>
-                <span style="font-size: 10px; font-weight: bold; color: {status_color}; background: {status_color}20; padding: 2px 6px; border-radius: 4px;">{status_txt}</span>
+        st.markdown("""
+            <div style="position: fixed; bottom: 20px; width: 100%; text-align: center; color: #475569; font-size: 0.7rem;">
+                Onboarding • Lavie System
             </div>
-        </div>
         """, unsafe_allow_html=True)
 
-    col_title, col_filter = st.columns([3, 1])
-    
-    with col_title:
-        st.markdown(f"""
-        <div style="margin-top: 5px;">
-            <h1 style="font-size: 32px; font-weight: 700; color: white; margin: 0;">{selected}</h1>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    with col_filter:
-        cat = st.selectbox(
-            "Categoria", 
-            ["GERAL", "MULTIFAMILIAR", "COMERCIAL", "USO MISTO", "UNIFAMILIAR"],
-            label_visibility="collapsed"
-        )
+    project_name = proj_dict[pid]
 
-    st.markdown("---")
-
-    filtro = None if cat == "GERAL" else cat
-    df = data_manager.get_data(filtro)
-
-    if selected == "Visão Geral":
-        dashboard.render_view(df, cat)
-    elif selected == "Lançamentos":
-        editor.render_view(df, cat)
-    elif selected == "Relatórios":
-        reports.render_view(df, cat)
+    if menu == "Dashboard":
+        render_dashboard(dm, pid, project_name)
+    elif menu == "Gestão":
+        render_management(dm, pid, project_name)
+    elif menu == "Configurações":
+        render_settings(dm)
 
 if __name__ == "__main__":
     main()

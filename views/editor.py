@@ -1,65 +1,57 @@
 import streamlit as st
 from services.data_manager import data_manager
 
-def render_view(df, arquivo_selecionado):
-    if df.empty:
-        st.info("Nenhum dado encontrado para editar.")
+def render_view(df_ignored, category):
+    
+    st.markdown(f"### Lançamentos: {category}")
+
+    projetos = data_manager.get_projects_by_category(category)
+    
+    if not projetos:
+        st.warning(f"Nenhuma obra encontrada na categoria {category}.")
         return
 
-    with st.expander("Filtros de Tabela", expanded=False):
-        c1, c2 = st.columns(2)
-        setores_disponiveis = df["SETOR"].unique() if "SETOR" in df.columns else []
-        resps_disponiveis = df["RESPONSÁVEL"].unique() if "RESPONSÁVEL" in df.columns else []
-        
-        filtro_setor = c1.multiselect("Setor", setores_disponiveis)
-        filtro_resp = c2.multiselect("Responsável", resps_disponiveis)
+    col_sel, col_blank = st.columns([1, 2])
+    with col_sel:
+        obra_selecionada = st.selectbox("Selecione a Obra:", projetos)
 
-    df_display = df.copy()
-    if filtro_setor and "SETOR" in df_display.columns:
-        df_display = df_display[df_display["SETOR"].isin(filtro_setor)]
-    if filtro_resp and "RESPONSÁVEL" in df_display.columns:
-        df_display = df_display[df_display["RESPONSÁVEL"].isin(filtro_resp)]
+    df_obra = data_manager.get_data_single_project(obra_selecionada)
+    
+    if df_obra.empty:
+        st.info("Carregando catálogo de atividades...")
+        return
 
-    cols_meta = ["ITEM", "ATIVIDADE", "DESCRIÇÃO", "ETAPA", "SETOR", "RESPONSÁVEL"]
-    cols_projetos = [c for c in df.columns if c not in cols_meta]
-
-    column_config = {
-        "ITEM": st.column_config.TextColumn("Item", disabled=True, width="small"),
+    column_cfg = {
+        "id": st.column_config.Column(hidden=True),
+        "ITEM": st.column_config.TextColumn("Item", width="small", disabled=True),
         "ATIVIDADE": st.column_config.TextColumn("Atividade", width="medium", disabled=True),
         "DESCRIÇÃO": st.column_config.TextColumn("Descrição", width="large", disabled=True),
-        "ETAPA": st.column_config.SelectboxColumn("Etapa", options=data_manager.LISTAS_VALIDACAO["ETAPA"]),
-        "SETOR": st.column_config.SelectboxColumn("Setor", options=data_manager.LISTAS_VALIDACAO["SETOR"]),
-        "RESPONSÁVEL": st.column_config.SelectboxColumn("Responsável", options=data_manager.LISTAS_VALIDACAO["RESPONSÁVEL"])
+        "ETAPA": st.column_config.TextColumn("Etapa", width="small", disabled=True),
+        "SETOR": st.column_config.TextColumn("Setor", width="small", disabled=True),
+        "RESPONSÁVEL": st.column_config.TextColumn("Responsável", width="small", disabled=True),
+        "STATUS": st.column_config.SelectboxColumn(
+            "Status Atual", 
+            options=data_manager.LISTAS_VALIDACAO["STATUS_PROJETO"],
+            width="medium",
+            required=True
+        )
     }
 
-    for proj in cols_projetos:
-        column_config[proj] = st.column_config.SelectboxColumn(
-            proj, 
-            options=data_manager.LISTAS_VALIDACAO["STATUS_PROJETO"],
-            width="small"
-        )
-
-    # Editor
-    st.markdown("### Tabela de Lançamentos")
+    st.markdown("---")
     edited_df = st.data_editor(
-        df_display,
-        column_config=column_config,
+        df_obra,
+        column_config=column_cfg,
         use_container_width=True,
-        num_rows="fixed", 
         hide_index=True,
         height=600,
-        key=f"editor_main"
+        key=f"editor_{obra_selecionada}"
     )
 
-    # Botão de Salvar
-    st.markdown("<br>", unsafe_allow_html=True)
-    c_save, c_void = st.columns([1, 4])
-    
-    with c_save:
-        if st.button("Salvar Alterações", type="primary", use_container_width=True):
-            with st.spinner("Gravando no Banco de Dados..."):
-                success, msg = data_manager.save_data(edited_df)
-                if success:
-                    st.toast(msg, icon="✅")
-                else:
-                    st.error(msg)
+    # 4. SALVAR
+    if st.button("Salvar Lançamentos", type="primary"):
+        p_id = data_manager.current_project_id 
+        success, msg = data_manager.save_single_project(edited_df, p_id)
+        if success:
+            st.toast(msg, icon="✅")
+        else:
+            st.error(msg)
