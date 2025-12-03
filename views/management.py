@@ -89,7 +89,15 @@ div[data-testid="column"] { background: transparent; }
     hero_bar_color = "#22c55e" if pct_global == 100 else "#3b82f6"
 
     st.markdown(f"""
-    <div style="background: radial-gradient(circle at center, rgba(227, 112, 38, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%); border: 1px solid rgba(227, 112, 38, 0.2); border-radius: 12px; padding: 20px 25px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+    <div style="
+    background-color: transparent !important;
+    background-image: linear-gradient(160deg, #2b2b2b 0%, #0a0a0c 100%) !important;
+    
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    padding: 30px;
+    border-radius: 10px !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7) !important;
+    margin-top: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
             <div>
                 <div style="font-size: 0.75rem; color: #FFFFFF; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Status Geral da Obra</div>
