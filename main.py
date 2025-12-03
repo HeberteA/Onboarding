@@ -78,7 +78,7 @@ def main():
         menu = option_menu(
             menu_title=None,
             options=["Gestão",  "Configurações", "Dashboard"],
-            icons=["grid", "kanban", "gear"], 
+            icons=["grid", "gear", "kanban"], 
             default_index=0,
             styles={
                 "container": {"padding": "0!important", "background": "transparent"},
