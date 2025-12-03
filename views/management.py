@@ -44,7 +44,7 @@ div[data-testid="column"] { background: transparent; }
 </style>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"## {project_name}")
+    st.markdown(f"Obra:")
 
     df = dm.get_project_data(project_id)
     if df.empty:
@@ -69,15 +69,8 @@ div[data-testid="column"] { background: transparent; }
     
     hero_bar_color = "#22c55e" if pct_global == 100 else "#E37026"
 
-    hud_html = textwrap.dedent(f"""
-    <div style="
-        background: radial-gradient(circle at center, rgba(227, 112, 38, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-        border: 1px solid rgba(227, 112, 38, 0.2);
-        border-radius: 12px;
-        padding: 20px 25px;
-        margin-bottom: 30px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    ">
+    st.markdown(f"""
+    <div style="background: radial-gradient(circle at center, rgba(227, 112, 38, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%); border: 1px solid rgba(227, 112, 38, 0.2); border-radius: 12px; padding: 20px 25px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
             <div>
                 <div style="font-size: 0.75rem; color: #E37026; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Status Geral da Obra</div>
@@ -95,13 +88,11 @@ div[data-testid="column"] { background: transparent; }
                 </div>
             </div>
         </div>
-        
         <div style="width: 100%; height: 10px; background-color: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden;">
             <div style="width: {pct_global}%; height: 100%; background-color: {hero_bar_color}; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px {hero_bar_color}80;"></div>
         </div>
     </div>
-    """)
-    st.markdown(hud_html, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
     df['root_id'] = df['item_number'].astype(str).apply(lambda x: x.split('.')[0])
     unique_roots = sorted(df['root_id'].unique(), key=lambda x: int(x) if x.isdigit() else 999)
