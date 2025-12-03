@@ -107,7 +107,7 @@ div[data-testid="column"] { background: transparent; }
                 </div>
             </div>
         </div>
-        <div style="width: 100%; height: 10px; background-color: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden;">
+        <div style="width: 100%; height: 10px; background-color: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden;">
             <div style="width: {pct_global}%; height: 100%; background-color: {hero_bar_color}; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px {hero_bar_color}80;"></div>
         </div>
     </div>
@@ -156,7 +156,7 @@ div[data-testid="column"] { background: transparent; }
             progress_bar_color = "#3b82f6"
 
         html_card = f"""
-<div style="background-color: linear-gradient(160deg, #3b3b3b 0%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid {border_color}; border-radius: 8px; padding: 15px 20px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px);">
+<div style="background-color: transparent !important; background-image: linear-gradient(160deg, #3b3b3b 0%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid {border_color}; border-radius: 8px; padding: 15px 20px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px);">
     <div style="font-weight: 600; color: #ffffff; font-size: 1.05rem; letter-spacing: 0.5px; flex-grow: 1;">
         {phase_label}
     </div>
