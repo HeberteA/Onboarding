@@ -148,7 +148,7 @@ def render_dashboard(dm):
             fig_bar = px.bar(gargalos, x='Qtd', y='Setor', orientation='h', color_discrete_sequence=['#E37026'], text="Qtd")
             fig_bar = update_fig_layout(fig_bar)
             fig_bar.update_layout(yaxis=dict(autorange="reversed"))
-            fig.update_traces(textposition='outside')
+            fig.update_traces(textposition='outside', color='#FFFFFF')
             st.plotly_chart(fig_bar, use_container_width=True)
         else:
             st.success("Sem pendências críticas.")
