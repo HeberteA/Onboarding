@@ -35,26 +35,31 @@ def render_dashboard(dm):
     })
     projects_list = sorted(df_all['project_name'].unique().tolist())
     
-    c_filter, c_kpi_space = st.columns([1, 3])
+    c_filter, _ = st.columns([1, 3])
     with c_filter:
         sel_project = st.selectbox("Filtrar Obra", ["Todas as Obras"] + projects_list)
 
     if sel_project != "Todas as Obras":
-        df = df_all[df_all['project_name'] == sel_project]
+        df = df_all[df_all['project_name'] == sel_project].copy()
         title_suffix = f": {sel_project}"
     else:
-        df = df_all
-        title_suffix = " "
+        df = df_all.copy()
+        title_suffix = " (Consolidado)"
 
+    df['item_number'] = df['item_number'].astype(str).str.strip()
+    
+    mask_activities = (
+        (df['item_number'].str.contains(r'\.', regex=True)) & 
+        (~df['item_number'].str.endswith('.0'))
+    )
+    
+    df_calc = df[mask_activities]
+    
+    k1, k2, k3, k4 = st.columns(4)
+    
     st.markdown(f"##### Visão Geral{title_suffix}")
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
-    df_calc = df[
-        (df['item_number'].astype(str).str.contains(r'\.', regex=True)) & 
-        (~df['item_number'].astype(str).str.endswith('.0'))
-    ]
-
-    # KPIs (Usando df_calc filtrado)
     total = len(df_calc)
     
     if total > 0:
@@ -65,9 +70,7 @@ def render_dashboard(dm):
         done = 0
         pending = 0
         progresso = 0
-
-    k1, k2, k3, k4 = st.columns(4)
-    
+        
     def metric_card(label, val, sub, color):
         return f"""
         <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:15px;">
