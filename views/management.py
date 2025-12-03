@@ -50,11 +50,13 @@ div[data-testid="column"] { background: transparent; }
         st.info("Nenhuma atividade cadastrada.")
         return
 
-    c1, c2, _ = st.columns([1.5, 1.5, 3])
-    with c1:
+    c1, c2, c3 = st.columns([2, 1, 1])
+    with c1;
+        st.markdown(f"## {project_name}")
+    with c2:
         unique_sectors = sorted([s for s in df['sector'].dropna().unique() if str(s).strip() != ""])
         sel_sector = st.selectbox("Setor", ["Todos"] + unique_sectors)
-    with c2:
+    with c3:
         sel_status = st.selectbox("Status", ["Todos"] + list(STATUS_COLORS.keys()))
 
     st.markdown("<div style='margin-bottom: 25px'></div>", unsafe_allow_html=True)
@@ -66,7 +68,7 @@ div[data-testid="column"] { background: transparent; }
     
     hero_bar_color = "#22c55e" if pct_global == 100 else "#E37026"
 
-    st.markdown(f"""
+    hud_html = textwrap.dedent(f"""
     <div style="
         background: radial-gradient(circle at center, rgba(227, 112, 38, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
         border: 1px solid rgba(227, 112, 38, 0.2);
@@ -97,7 +99,8 @@ div[data-testid="column"] { background: transparent; }
             <div style="width: {pct_global}%; height: 100%; background-color: {hero_bar_color}; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px {hero_bar_color}80;"></div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
+    st.markdown(hud_html, unsafe_allow_html=True)
 
     df['root_id'] = df['item_number'].astype(str).apply(lambda x: x.split('.')[0])
     unique_roots = sorted(df['root_id'].unique(), key=lambda x: int(x) if x.isdigit() else 999)
