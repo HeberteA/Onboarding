@@ -44,8 +44,10 @@ def render_dashboard(dm):
         title_suffix = f": {sel_project}"
     else:
         df = df_all.copy()
-        title_suffix = " (Consolidado)"
-
+        
+    st.markdown(f"##### Visão Geral")
+    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+    
     df['item_number'] = df['item_number'].astype(str).str.strip()
     
     mask_activities = (
@@ -55,9 +57,6 @@ def render_dashboard(dm):
     
     df_calc = df[mask_activities]
     
-    st.markdown(f"##### Visão Geral{title_suffix}")
-    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
-
     total = len(df_calc)
     
     if total > 0:
@@ -123,7 +122,7 @@ def render_dashboard(dm):
             fig = px.bar(
                 df_proj, x='Progresso', y='Obra', orientation='h',
                 text=df_proj['Progresso'].apply(lambda x: f"{int(x)}%"),
-                color='Progresso', color_continuous_scale=['#333', '#E37026']
+                color='Progresso', color_continuous_scale=['#333', '#3b82f6']
             )
             fig = update_fig_layout(fig)
             fig.update_layout(coloraxis_showscale=False)
@@ -146,7 +145,7 @@ def render_dashboard(dm):
         if not pending_df.empty:
             gargalos = pending_df['sector'].value_counts().reset_index().head(5)
             gargalos.columns = ['Setor', 'Qtd']
-            fig_bar = px.bar(gargalos, x='Qtd', y='Setor', orientation='h', color_discrete_sequence=['#f59e0b'])
+            fig_bar = px.bar(gargalos, x='Qtd', y='Setor', orientation='h', color_discrete_sequence=['#E37026'])
             fig_bar = update_fig_layout(fig_bar)
             fig_bar.update_layout(yaxis=dict(autorange="reversed"))
             st.plotly_chart(fig_bar, use_container_width=True)
