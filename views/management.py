@@ -73,7 +73,7 @@ div[data-testid="column"] { background: transparent; }
     <div style="background: radial-gradient(circle at center, rgba(227, 112, 38, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%); border: 1px solid rgba(227, 112, 38, 0.2); border-radius: 12px; padding: 20px 25px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
             <div>
-                <div style="font-size: 0.75rem; color: #E37026; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Status Geral da Obra</div>
+                <div style="font-size: 0.75rem; color: #FFFFFF; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Status Geral da Obra</div>
                 <div style="font-size: 2rem; font-weight: 700; color: #fff; line-height: 1;">
                     {pct_global}% 
                     <span style="font-size: 1rem; color: #888; font-weight: 400; margin-left: 5px;">Concluído</span>
