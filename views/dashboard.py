@@ -153,5 +153,5 @@ def render_dashboard(dm):
             st.success("Sem pendências críticas.")
 
     st.markdown("#### Radar de Atividades")
-    risk_table = df_calc[df_calc['status'] == 'PENDENTE'][['project_name', 'title', 'stage', 'responsible', 'status']].head(10)
+    risk_table = df_calc[df_calc['status'] == 'PENDENTE'][['project_name', 'stage', 'responsible', 'status']].head(10)
     st.dataframe(risk_table, use_container_width=True, hide_index=True)
