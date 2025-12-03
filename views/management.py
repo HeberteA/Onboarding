@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import textwrap
 
 STATUS_COLORS = {
     "SIM": "#35BE53",         
