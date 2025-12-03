@@ -117,6 +117,7 @@ div[data-testid="column"] {
     </div>
     """, unsafe_allow_html=True)
 
+    st.space("small")
     df['root_id'] = df['item_number'].astype(str).apply(lambda x: x.split('.')[0])
     unique_roots = sorted(df['root_id'].unique(), key=lambda x: int(x) if x.isdigit() else 999)
 
