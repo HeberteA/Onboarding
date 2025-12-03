@@ -58,6 +58,46 @@ div[data-testid="column"] { background: transparent; }
         sel_status = st.selectbox("Status", ["Todos"] + list(STATUS_COLORS.keys()))
 
     st.markdown("<div style='margin-bottom: 25px'></div>", unsafe_allow_html=True)
+    
+    total_global = len(df)
+    done_global = len(df[df['status'].isin(['SIM', 'NÃO SE APLICA'])])
+    pending_global = total_global - done_global
+    pct_global = int((done_global / total_global) * 100) if total_global > 0 else 0
+    
+    hero_bar_color = "#22c55e" if pct_global == 100 else "#E37026"
+
+    st.markdown(f"""
+    <div style="
+        background: radial-gradient(circle at center, rgba(227, 112, 38, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid rgba(227, 112, 38, 0.2);
+        border-radius: 12px;
+        padding: 20px 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    ">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
+            <div>
+                <div style="font-size: 0.75rem; color: #E37026; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Status Geral da Obra</div>
+                <div style="font-size: 2rem; font-weight: 700; color: #fff; line-height: 1;">
+                    {pct_global}% 
+                    <span style="font-size: 1rem; color: #888; font-weight: 400; margin-left: 5px;">Concluído</span>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 1rem; color: #ccc; font-weight: 600;">
+                    <span style="color: #fff;">{done_global}</span> <span style="color:#666;">/ {total_global}</span> Itens
+                </div>
+                <div style="font-size: 0.85rem; color: #f59e0b; margin-top: 4px; font-weight: 500;">
+                    {pending_global} Pendentes
+                </div>
+            </div>
+        </div>
+        
+        <div style="width: 100%; height: 10px; background-color: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden;">
+            <div style="width: {pct_global}%; height: 100%; background-color: {hero_bar_color}; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px {hero_bar_color}80;"></div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     df['root_id'] = df['item_number'].astype(str).apply(lambda x: x.split('.')[0])
     unique_roots = sorted(df['root_id'].unique(), key=lambda x: int(x) if x.isdigit() else 999)
