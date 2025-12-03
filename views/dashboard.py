@@ -55,8 +55,6 @@ def render_dashboard(dm):
     
     df_calc = df[mask_activities]
     
-    k1, k2, k3, k4 = st.columns(4)
-    
     st.markdown(f"##### Visão Geral{title_suffix}")
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
@@ -70,7 +68,9 @@ def render_dashboard(dm):
         done = 0
         pending = 0
         progresso = 0
-        
+    
+    k1, k2, k3, k4 = st.columns(4)
+    
     def metric_card(label, val, sub, color):
         return f"""
         <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:15px;">
@@ -85,12 +85,12 @@ def render_dashboard(dm):
     with k3: st.markdown(metric_card("Risco", pending, "Pendentes", "#f59e0b"), unsafe_allow_html=True)
     
     if sel_project == "Todas as Obras":
-        risk_proj = df[df['status'] == 'PENDENTE']['project_name'].value_counts()
+        risk_proj = df_calc[df_calc['status'] == 'PENDENTE']['project_name'].value_counts()
         top_risk = risk_proj.index[0] if not risk_proj.empty else "Nenhuma"
         val_risk = risk_proj.iloc[0] if not risk_proj.empty else 0
         lbl_risk = "Obra com Mais Pendências"
     else:
-        risk_sec = df[df['status'] == 'PENDENTE']['sector'].value_counts()
+        risk_sec = df_calc[df_calc['status'] == 'PENDENTE']['sector'].value_counts()
         top_risk = risk_sec.index[0] if not risk_sec.empty else "Nenhum"
         val_risk = risk_sec.iloc[0] if not risk_sec.empty else 0
         lbl_risk = "Gargalo no Setor"
@@ -107,7 +107,12 @@ def render_dashboard(dm):
             
             proj_stats = []
             for p in projects_list:
-                p_df = df[df['project_name'] == p]
+                p_df = df_all[
+                    (df_all['project_name'] == p) & 
+                    (df_all['item_number'].astype(str).str.strip().str.contains(r'\.', regex=True)) & 
+                    (~df_all['item_number'].astype(str).str.strip().str.endswith('.0'))
+                ]
+                
                 p_tot = len(p_df)
                 p_done = len(p_df[p_df['status'].isin(['SIM', 'NÃO SE APLICA'])])
                 p_pct = (p_done / p_tot) * 100 if p_tot > 0 else 0
@@ -126,17 +131,18 @@ def render_dashboard(dm):
         else:
             st.markdown("#### Distribuição (Etapa > Setor)")
             try:
-                df['stage'] = df['stage'].fillna("N/D")
-                df['sector'] = df['sector'].fillna("GERAL")
-                df['count'] = 1
-                fig = px.sunburst(df, path=['stage', 'sector', 'status'], values='count', color='status', color_discrete_map=COLOR_MAP)
+                df_sun = df_calc.copy()
+                df_sun['stage'] = df_sun['stage'].fillna("N/D")
+                df_sun['sector'] = df_sun['sector'].fillna("GERAL")
+                df_sun['count'] = 1
+                fig = px.sunburst(df_sun, path=['stage', 'sector', 'status'], values='count', color='status', color_discrete_map=COLOR_MAP)
                 fig.update_layout(margin=dict(t=0, l=0, r=0, b=0), paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter"))
                 st.plotly_chart(fig, use_container_width=True)
             except: st.info("Dados insuficientes.")
 
     with g2:
         st.markdown("#### Top Pendências")
-        pending_df = df[df['status'] == 'PENDENTE']
+        pending_df = df_calc[df_calc['status'] == 'PENDENTE']
         if not pending_df.empty:
             gargalos = pending_df['sector'].value_counts().reset_index().head(5)
             gargalos.columns = ['Setor', 'Qtd']
