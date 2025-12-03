@@ -51,17 +51,20 @@ div[data-testid="column"] { background: transparent; }
         st.info("Nenhuma atividade cadastrada.")
         return
 
-    df['status'] = df['status'].astype(str).str.strip().str.upper()
-    df['status'] = df['status'].replace({
-        'NAO SE APLICA': 'NÃO SE APLICA',
-        'NAO INICIADO': 'NÃO INICIADO',
-        'CONCLUIDO': 'SIM',
-        'OK': 'SIM'
-    })
-    total_global = len(df)
-    done_global = len(df[df['status'].isin(['SIM', 'NÃO SE APLICA'])])
-    pending_global = total_global - done_global
-    pct_global = int((done_global / total_global) * 100) if total_global > 0 else 0
+    df_activities = df[
+        (df['item_number'].astype(str).str.contains(r'\.', regex=True)) & 
+        (~df['item_number'].astype(str).str.endswith('.0'))
+    ]
+    total_global = len(df_activities)
+    
+    if total_global > 0:
+        done_global = len(df_activities[df_activities['status'].isin(['SIM', 'NÃO SE APLICA'])])
+        pending_global = total_global - done_global
+        pct_global = int((done_global / total_global) * 100)
+    else:
+        done_global = 0
+        pending_global = 0
+        pct_global = 0
 
     c1, c2, c3 = st.columns([2, 1, 1])
     with c1:
