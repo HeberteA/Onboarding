@@ -2,95 +2,129 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 
-STATUS_COLORS = {
-    "SIM": "#10B981",         
-    "ANDAMENTO": "#3B82F6",    
-    "PENDENTE": "#F59E0B",     
-    "ENTRADA": "#8B5CF6",      
-    "NÃO INICIADO": "#475569",
-    "NÃO SE APLICA": "#1e293b" 
+COLOR_MAP = {
+    "SIM": "#22c55e", "ANDAMENTO": "#3b82f6", "PENDENTE": "#f59e0b",
+    "ENTRADA": "#8b5cf6", "NÃO INICIADO": "#64748b", "NÃO SE APLICA": "#334155"
 }
 
-def render_dashboard(dm, project_id, project_name):
-    st.markdown("""
-    <style>
-        .metric-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-        }
-        .metric-label { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
-        .metric-value { font-size: 1.8rem; font-weight: 700; color: #f8fafc; }
-    </style>
-    """, unsafe_allow_html=True)
+def update_fig_layout(fig):
+    fig.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font=dict(family="Inter", color="#cbd5e1"),
+        margin=dict(t=30, l=0, r=0, b=0),
+        xaxis=dict(showgrid=False, showticklabels=False),
+        yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)'),
+    )
+    return fig
 
-    st.markdown(f"## Command Center: <span style='color:var(--primary-color)'>{project_name}</span>", unsafe_allow_html=True)
+def render_dashboard(dm):
+    st.markdown("## Dashboard")
     
-    df = dm.get_project_data(project_id)
-    if df.empty:
-        st.info("Aguardando dados para gerar inteligência.")
+    df_all = dm.get_global_dashboard_data()
+    if df_all.empty:
+        st.info("Nenhum dado encontrado.")
         return
 
+    projects_list = sorted(df_all['project_name'].unique().tolist())
+    
+    c_filter, c_kpi_space = st.columns([1, 3])
+    with c_filter:
+        sel_project = st.selectbox("Filtrar Obra", ["Todas as Obras"] + projects_list)
+
+    if sel_project != "Todas as Obras":
+        df = df_all[df_all['project_name'] == sel_project]
+        title_suffix = f": {sel_project}"
+    else:
+        df = df_all
+        title_suffix = " "
+
+    st.markdown(f"##### Visão Geral{title_suffix}")
+    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+
     total = len(df)
-    concluidos = len(df[df['status'] == 'SIM'])
-    atencao = len(df[df['status'].isin(['PENDENTE', 'ENTRADA'])])
-    progresso = (concluidos / total) * 100 if total > 0 else 0
+    done = len(df[df['status'].isin(['SIM', 'NÃO SE APLICA'])])
+    pending = len(df[df['status'] == 'PENDENTE'])
+    progresso = int((done / total) * 100) if total > 0 else 0
 
-    c1, c2, c3, c4 = st.columns(4)
-    with c1: st.markdown(f"""<div class="metric-card"><div class="metric-label">Total Items</div><div class="metric-value">{total}</div></div>""", unsafe_allow_html=True)
-    with c2: st.markdown(f"""<div class="metric-card"><div class="metric-label">Concluídos</div><div class="metric-value" style="color:#10B981">{concluidos}</div></div>""", unsafe_allow_html=True)
-    with c3: st.markdown(f"""<div class="metric-card"><div class="metric-label">Atenção</div><div class="metric-value" style="color:#F59E0B">{atencao}</div></div>""", unsafe_allow_html=True)
-    with c4: st.markdown(f"""<div class="metric-card"><div class="metric-label">Progresso</div><div class="metric-value">{int(progresso)}%</div></div>""", unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    col_chart1, col_chart2 = st.columns([1.5, 1])
-
-    with col_chart1:
-        st.markdown("##### Distribuição Hierárquica")
+    k1, k2, k3, k4 = st.columns(4)
+    
+    def metric_card(label, val, sub, color):
+        return f"""
+        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:15px;">
+            <div style="color:#888; font-size:0.75rem; text-transform:uppercase;">{label}</div>
+            <div style="color:#fff; font-size:1.8rem; font-weight:700;">{val}</div>
+            <div style="color:{color}; font-size:0.85rem;">{sub}</div>
+        </div>
+        """
+    
+    with k1: st.markdown(metric_card("Total", total, "Atividades", "#888"), unsafe_allow_html=True)
+    with k2: st.markdown(metric_card("Progresso", f"{progresso}%", f"{done} Concluídos", "#22c55e"), unsafe_allow_html=True)
+    with k3: st.markdown(metric_card("Risco", pending, "Pendentes", "#f59e0b"), unsafe_allow_html=True)
+    
+    if sel_project == "Todas as Obras":
+        risk_proj = df[df['status'] == 'PENDENTE']['project_name'].value_counts()
+        top_risk = risk_proj.index[0] if not risk_proj.empty else "Nenhuma"
+        val_risk = risk_proj.iloc[0] if not risk_proj.empty else 0
+        lbl_risk = "Obra com Mais Pendências"
+    else:
+        risk_sec = df[df['status'] == 'PENDENTE']['sector'].value_counts()
+        top_risk = risk_sec.index[0] if not risk_sec.empty else "Nenhum"
+        val_risk = risk_sec.iloc[0] if not risk_sec.empty else 0
+        lbl_risk = "Gargalo no Setor"
         
-        df_sun = df.copy()
-        df_sun['sector'] = df_sun['sector'].fillna("SEM SETOR") 
-        df_sun['status'] = df_sun['status'].fillna("NÃO INICIADO")
-        df_sun['count'] = 1
-        
-        try:
-            fig_sun = px.sunburst(
-                df_sun, 
-                path=['sector', 'status'], 
-                values='count',
-                color='status',
-                color_discrete_map=STATUS_COLORS
+    with k4: st.markdown(metric_card(lbl_risk, top_risk, f"{val_risk} Itens", "#E37026"), unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    g1, g2 = st.columns([1.5, 1])
+
+    with g1:
+        if sel_project == "Todas as Obras":
+            st.markdown("#### Comparativo de Progresso por Obra")
+            
+            proj_stats = []
+            for p in projects_list:
+                p_df = df[df['project_name'] == p]
+                p_tot = len(p_df)
+                p_done = len(p_df[p_df['status'].isin(['SIM', 'NÃO SE APLICA'])])
+                p_pct = (p_done / p_tot) * 100 if p_tot > 0 else 0
+                proj_stats.append({'Obra': p, 'Progresso': p_pct})
+            
+            df_proj = pd.DataFrame(proj_stats).sort_values('Progresso', ascending=True)
+            
+            fig = px.bar(
+                df_proj, x='Progresso', y='Obra', orientation='h',
+                text=df_proj['Progresso'].apply(lambda x: f"{int(x)}%"),
+                color='Progresso', color_continuous_scale=['#333', '#E37026']
             )
-            fig_sun.update_layout(
-                margin=dict(t=0, l=0, r=0, b=0),
-                paper_bgcolor='rgba(0,0,0,0)',
-                font=dict(family="Inter", size=14)
-            )
-            st.plotly_chart(fig_sun, use_container_width=True)
-        except Exception as e:
-            st.error(f"Erro ao gerar gráfico: {e}")
+            fig = update_fig_layout(fig)
+            fig.update_layout(coloraxis_showscale=False)
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.markdown("#### Distribuição (Etapa > Setor)")
+            try:
+                df['stage'] = df['stage'].fillna("N/D")
+                df['sector'] = df['sector'].fillna("GERAL")
+                df['count'] = 1
+                fig = px.sunburst(df, path=['stage', 'sector', 'status'], values='count', color='status', color_discrete_map=COLOR_MAP)
+                fig.update_layout(margin=dict(t=0, l=0, r=0, b=0), paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter"))
+                st.plotly_chart(fig, use_container_width=True)
+            except: st.info("Dados insuficientes.")
 
-    with col_chart2:
-        st.markdown("##### Gargalos Operacionais")
-        pending_df = df[~df['status'].isin(['SIM', 'NÃO SE APLICA', 'NÃO INICIADO'])]
-        
+    with g2:
+        st.markdown("#### Top Pendências")
+        pending_df = df[df['status'] == 'PENDENTE']
         if not pending_df.empty:
             gargalos = pending_df['sector'].value_counts().reset_index().head(5)
-            gargalos.columns = ['Setor', 'Pendências']
-            
-            fig_bar = px.bar(
-                gargalos, x='Pendências', y='Setor', orientation='h',
-                color='Pendências', color_continuous_scale=['#3B82F6', '#F59E0B', '#EF4444']
-            )
-            fig_bar.update_layout(
-                yaxis=dict(autorange="reversed"), xaxis=dict(showgrid=False),
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color="#cbd5e1", family="Inter"),
-                margin=dict(t=0, l=0, r=0, b=0), coloraxis_showscale=False
-            )
+            gargalos.columns = ['Setor', 'Qtd']
+            fig_bar = px.bar(gargalos, x='Qtd', y='Setor', orientation='h', color_discrete_sequence=['#f59e0b'])
+            fig_bar = update_fig_layout(fig_bar)
+            fig_bar.update_layout(yaxis=dict(autorange="reversed"))
             st.plotly_chart(fig_bar, use_container_width=True)
         else:
-            st.success("Fluxo operacional fluindo.")
+            st.success("Sem pendências críticas.")
+
+    st.markdown("#### Radar de Atividades")
+    risk_table = df[df['status'] == 'PENDENTE'][['project_name', 'stage', 'responsible', 'status']].head(10)
+    st.dataframe(risk_table, use_container_width=True, hide_index=True)

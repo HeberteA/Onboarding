@@ -10,25 +10,15 @@ from views.settings import render_settings
 st.set_page_config(page_title="Lavie Onboarding", layout="wide", initial_sidebar_state="expanded", page_icon="Lavie1.png")
 
 st.markdown("""
-<style> 
-    /* Variáveis */
-    :root { --primary: #8B5CF6; --bg-dark: #0F172A; }
-    
-    /* Global App */
-    .stApp { 
+<style>
+    /* 1. SEU ESTILO PADRÃO (BACKGROUND E INPUTS) */
+    [data-testid="stAppViewContainer"] {
         background: radial-gradient(circle at 10% 20%, #3b3b3b 0%, #000000 100%);
         font-family: 'Inter', sans-serif;
         color: #ffffff;
     }
-    .block-container { padding-top: 1.5rem; }
 
-    /* SIDEBAR STYLING - REMOVENDO O PADRÃO */
-    section[data-testid="stSidebar"] {
-        background-color: #020617; /* Slate-950 (Mais escuro que o fundo) */
-        border-right: 1px solid rgba(255,255,255,0.05);
-    }
-    
-    /* Logo Area */
+     /* Logo Area */
     .sidebar-logo-container {
         text-align: center;
         padding: 20px 0;
@@ -47,19 +37,28 @@ st.markdown("""
         text-transform: uppercase;
         letter-spacing: 3px;
     }
+            
+    /* Ajustes de Inputs para contraste (Seu código) */
+    div[data-baseweb="input"] > div, div[data-baseweb="select"] > div {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+    }
+    div[data-testid="stNumberInput"] input, div[data-testid="stTextInput"] input {
+        color: white !important;
+    }
 
-    /* Option Menu Customization */
-    .nav-link {
-        border-radius: 8px !important;
-        margin-bottom: 5px !important;
-        font-size: 0.95rem !important;
-        font-weight: 500 !important;
+    /* 2. CUSTOMIZAÇÃO DA SIDEBAR PARA HARMONIZAR */
+    section[data-testid="stSidebar"] {
+        background-color: #000000; /* Preto absoluto para contraste com o radial */
+        border-right: 1px solid rgba(255,255,255,0.1);
     }
-    .nav-link:hover {
-        background: radial-gradient(circle at 10% 20%, #3b3b3b 0%, #000000 100%);
-        font-family: 'Inter', sans-serif;
-        color: #ffffff;
-    }
+    
+    /* Headers */
+    h1, h2, h3 { color: #ffffff !important; font-weight: 600; letter-spacing: -0.5px; }
+    
+    /* Remove padding excessivo do topo */
+    .block-container { padding-top: 2rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -67,55 +66,58 @@ def main():
     dm = DataManager()
 
     with st.sidebar:
-        if os.path.exists("logo.png"):
-            st.image("Lavie.png", width=120)
-        else:
-            st.markdown("""
-                <div class="sidebar-logo-container">
-                    <div class="sidebar-logo-text">LAVIE</div>
-                    <div class="sidebar-logo-sub">CONSTRUÇÕES</div>
-                </div>
-            """, unsafe_allow_html=True)
-        
-        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
-
-        projects = dm.get_projects()
-        if projects.empty:
-            st.error("Sem projetos. Rode o script de importação.")
-            return
-
-        proj_dict = dict(zip(projects['id'], projects['name']))
-        
-        if 'selected_project_id' not in st.session_state:
-            st.session_state['selected_project_id'] = projects['id'].iloc[0]
-        
-        if st.session_state['selected_project_id'] not in proj_dict:
-            st.session_state['selected_project_id'] = projects['id'].iloc[0]
-
-        st.caption("OBRA ATIVA")
-        pid = st.selectbox(
-            "Selecione a Obra",
-            options=list(proj_dict.keys()),
-            format_func=lambda x: proj_dict[x],
-            index=list(proj_dict.keys()).index(st.session_state['selected_project_id']),
-            label_visibility="collapsed"
-        )
-        st.session_state['selected_project_id'] = pid
-        
+        st.image("Lavie.png")
+        st.markdown("""
+            <div class="sidebar-logo-container">
+                <div class="sidebar-logo-text">ONBOARDING</div>
+                <div class="sidebar-logo-sub">Gestão de Obras</div>
+            </div>
+        """, unsafe_allow_html=True)
         st.markdown("---")
-        
+        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
         menu = option_menu(
             menu_title=None,
-            options=["Dashboard", "Gestão", "Configurações"],
-            icons=["grid-fill", "kanban", "gear-fill"], 
+            options=["Gestão",  "Configurações", "Dashboard"],
+            icons=["grid", "kanban", "gear"], 
             default_index=0,
             styles={
-                "container": {"padding": "0!important", "background-color": "transparent"},
-                "icon": {"color": "#94a3b8", "font-size": "18px"}, 
-                "nav-link": {"color": "#cbd5e1", "text-align": "left", "margin":"5px"},
-                "nav-link-selected": {"background-color": "var(--primary)", "color": "white", "box-shadow": "0 4px 6px -1px rgba(0,0,0,0.1)"},
+                "container": {"padding": "0!important", "background": "transparent"},
+                "nav-link": {"color": "#aaa", "font-size": "0.9rem", "margin":"6px", "text-align": "left"},
+                "nav-link-selected": {
+                    "background-color": "rgba(227, 112, 38, 0.15)", 
+                    "color": "#E37026", 
+                    "border-left": "3px solid #E37026"
+                },
+                "icon": {"font-size": "1.1rem"}
             }
         )
+
+
+        selected_pid = None
+        
+        if menu == "Gestão":
+            st.markdown("---")
+            projects = dm.get_projects()
+            if not projects.empty:
+                proj_dict = dict(zip(projects['id'], projects['name']))
+                
+                if 'selected_project_id' not in st.session_state:
+                    st.session_state['selected_project_id'] = projects['id'].iloc[0]
+                
+                st.caption("OBRA ATIVA")
+                selected_pid = st.selectbox(
+                    "Selecione a Obra",
+                    options=list(proj_dict.keys()),
+                    format_func=lambda x: proj_dict[x],
+                    index=list(proj_dict.keys()).index(st.session_state['selected_project_id']),
+                    label_visibility="collapsed"
+                )
+                st.session_state['selected_project_id'] = selected_pid
+                
+            else:
+                st.warning("Sem obras cadastradas.")
+        
+        st.markdown("---")
         
         st.markdown("""
             <div style="position: fixed; bottom: 20px; width: 100%; text-align: center; color: #475569; font-size: 0.7rem;">
@@ -123,12 +125,14 @@ def main():
             </div>
         """, unsafe_allow_html=True)
 
-    project_name = proj_dict[pid]
-
     if menu == "Dashboard":
-        render_dashboard(dm, pid, project_name)
+        render_dashboard(dm)
+    
     elif menu == "Gestão":
-        render_management(dm, pid, project_name)
+        if selected_pid:
+            project_name = proj_dict[selected_pid]
+            render_management(dm, selected_pid, project_name)
+    
     elif menu == "Configurações":
         render_settings(dm)
 
