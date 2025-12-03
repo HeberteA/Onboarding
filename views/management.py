@@ -33,12 +33,6 @@ div[data-testid="column"] {
 .streamlit-expanderHeader:hover {
     background-color: transparent !important;
     background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%) !important;
-    
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    padding: 30px;
-    border-radius: 10px !important;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7) !important;
-    margin-top: 10px;
     text-decoration: underline;
 }
 .streamlit-expanderContent {
@@ -57,7 +51,7 @@ div[data-testid="column"] {
 </style>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"#### Obra:")
+    st.markdown("##### Obra:")
 
     df = dm.get_project_data(project_id)
     if df.empty:
@@ -81,7 +75,9 @@ div[data-testid="column"] {
 
     c1, c2, c3 = st.columns([2, 1, 1])
     with c1:
-        st.markdown(f"## {project_name}")
+        st.markdown(("""
+        <span style='color: #E37026;'>{project_name}</span>
+        """, unsafe_allow_html=True)
     with c2:
         unique_sectors = sorted([s for s in df['sector'].dropna().unique() if str(s).strip() != ""])
         sel_sector = st.selectbox("Setor", ["Todos"] + unique_sectors)
