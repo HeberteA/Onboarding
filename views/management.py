@@ -18,7 +18,7 @@ div[data-testid="column"] { background: transparent; }
 /* Expander Header Minimalista */
 .streamlit-expanderHeader {
     background-color: transparent !important;
-    background-image: linear-gradient(160deg, #3b3b3b 10%, #0a0a0c 100%) !important;
+    background-image: linear-gradient(160deg, #2b2b2b 0%, #0a0a0c 100%) !important;
     
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     padding: 30px;
@@ -28,7 +28,7 @@ div[data-testid="column"] { background: transparent; }
 }
 .streamlit-expanderHeader:hover {
     background-color: transparent !important;
-    background-image: linear-gradient(160deg, #3b3b3b 10%, #0a0a0c 100%) !important;
+    background-image: linear-gradient(160deg, #2b2b2b 0%, #0a0a0c 100%) !important;
     
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     padding: 30px;
@@ -38,7 +38,7 @@ div[data-testid="column"] { background: transparent; }
     text-decoration: underline;
 }
 .streamlit-expanderContent {
-    border: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     padding-left: 12px !important;
     border-left: 1px dashed rgba(255,255,255,0.1) !important;
     margin-left: 10px !important;
