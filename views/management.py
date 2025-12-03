@@ -18,11 +18,13 @@ div[data-testid="column"] { background: transparent; }
 /* Expander Header Minimalista */
 .streamlit-expanderHeader {
     background-color: transparent !important;
-    border: none !important;
-    color: #888 !important;
-    font-size: 0.8rem !important;
-    padding: 0px !important;
-    margin-top: 4px !important;
+    background-image: linear-gradient(160deg, #2b2b2b 0%, #0a0a0c 100%) !important;
+    
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    padding: 30px;
+    border-radius: 10px !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7) !important;
+    margin-top: 10px;
 }
 .streamlit-expanderHeader:hover {
     color: #E37026 !important;
