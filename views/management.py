@@ -89,7 +89,7 @@ div[data-testid="column"] { background: transparent; }
     hero_bar_color = "#22c55e" if pct_global == 100 else "#3b82f6"
 
     st.markdown(f"""
-    <div style="background-color: transparent !important; background-image: linear-gradient(160deg, #3b3b3b 10%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; padding: 30px; border-radius: 10px !important; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7) !important;">
+    <div style="background-color: transparent !important; background-image: linear-gradient(160deg, #3b3b3b 0%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; padding: 30px; border-radius: 10px !important; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7) !important;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
             <div>
                 <div style="font-size: 0.75rem; color: #FFFFFF; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Status Geral da Obra</div>
@@ -156,7 +156,7 @@ div[data-testid="column"] { background: transparent; }
             progress_bar_color = "#3b82f6"
 
         html_card = f"""
-<div style="background-color: transparent !important; background-image: linear-gradient(160deg, #3b3b3b 10%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid {border_color}; border-radius: 8px; padding: 15px 20px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px);">
+<div style="background-color: transparent !important; background-image: linear-gradient(160deg, #3b3b3b 0%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid {border_color}; border-radius: 8px; padding: 15px 20px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px);">
     <div style="font-weight: 600; color: #ffffff; font-size: 1.05rem; letter-spacing: 0.5px; flex-grow: 1;">
         {phase_label}
     </div>
