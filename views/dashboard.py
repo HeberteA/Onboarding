@@ -49,10 +49,22 @@ def render_dashboard(dm):
     st.markdown(f"##### Visão Geral{title_suffix}")
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
-    total = len(df)
-    done = len(df[df['status'].isin(['SIM', 'NÃO SE APLICA'])])
-    pending = len(df[df['status'] == 'PENDENTE'])
-    progresso = int((done / total) * 100) if total > 0 else 0
+    df_calc = df[
+        (df['item_number'].astype(str).str.contains(r'\.', regex=True)) & 
+        (~df['item_number'].astype(str).str.endswith('.0'))
+    ]
+
+    # KPIs (Usando df_calc filtrado)
+    total = len(df_calc)
+    
+    if total > 0:
+        done = len(df_calc[df_calc['status'].isin(['SIM', 'NÃO SE APLICA'])])
+        pending = len(df_calc[df_calc['status'] == 'PENDENTE'])
+        progresso = int((done / total) * 100)
+    else:
+        done = 0
+        pending = 0
+        progresso = 0
 
     k1, k2, k3, k4 = st.columns(4)
     
