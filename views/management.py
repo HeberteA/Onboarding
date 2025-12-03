@@ -51,6 +51,18 @@ div[data-testid="column"] { background: transparent; }
         st.info("Nenhuma atividade cadastrada.")
         return
 
+    df['status'] = df['status'].astype(str).str.strip().str.upper()
+    df['status'] = df['status'].replace({
+        'NAO SE APLICA': 'NÃO SE APLICA',
+        'NAO INICIADO': 'NÃO INICIADO',
+        'CONCLUIDO': 'SIM',
+        'OK': 'SIM'
+    })
+    total_global = len(df)
+    done_global = len(df[df['status'].isin(['SIM', 'NÃO SE APLICA'])])
+    pending_global = total_global - done_global
+    pct_global = int((done_global / total_global) * 100) if total_global > 0 else 0
+
     c1, c2, c3 = st.columns([2, 1, 1])
     with c1:
         st.markdown(f"## {project_name}")
@@ -61,20 +73,6 @@ div[data-testid="column"] { background: transparent; }
         sel_status = st.selectbox("Status", ["Todos"] + list(STATUS_COLORS.keys()))
 
     st.markdown("<div style='margin-bottom: 25px'></div>", unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-    total_global = len(df)
-    done_global = len(df[df['status'].isin(['SIM', 'NÃO SE APLICA'])])
-    pending_global = total_global - done_global
-
-    pct_global = int((done_global / total_global) * 100) if total_global > 0 else 0
 
     hero_bar_color = "#22c55e" if pct_global == 100 else "#3b82f6"
 
