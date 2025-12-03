@@ -13,7 +13,11 @@ def render_management(dm, project_id, project_name):
     st.markdown("""
 <style>
 /* Remove fundo das colunas */
-div[data-testid="column"] { background: transparent; }
+div[data-testid="column"] { 
+    background: radial-gradient(circle at 10% 20%, #3b3b3b 0%, #000000 100%);
+    font-family: 'Inter', sans-serif;
+    color: #ffffff;
+ }
 
 /* Expander Header Minimalista */
 .streamlit-expanderHeader {
