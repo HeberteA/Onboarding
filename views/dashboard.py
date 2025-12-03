@@ -136,6 +136,7 @@ def render_dashboard(dm):
                 df_sun['count'] = 1
                 fig = px.sunburst(df_sun, path=['stage', 'sector', 'status'], values='count', color='status', color_discrete_map=COLOR_MAP)
                 fig.update_layout(margin=dict(t=0, l=0, r=0, b=0), paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter"))
+                fig.update_traces(textposition='inside')
                 st.plotly_chart(fig, use_container_width=True)
             except: st.info("Dados insuficientes.")
 
