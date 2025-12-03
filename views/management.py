@@ -62,8 +62,17 @@ div[data-testid="column"] { background: transparent; }
 
     st.markdown("<div style='margin-bottom: 25px'></div>", unsafe_allow_html=True)
     
+    df['status'] = df['status'].astype(str).str.strip().str.upper()
+    df['status'] = df['status'].replace({
+        'NAO SE APLICA': 'NÃO SE APLICA',
+        'NAO INICIADO': 'NÃO INICIADO',
+        'CONCLUIDO': 'SIM',
+        'OK': 'SIM'
+    })
+
     total_global = len(df)
     done_global = len(df[df['status'].isin(['SIM', 'NÃO SE APLICA'])])
+    pending_global = total_global - done_global
     pending_global = total_global - done_global
     pct_global = int((done_global / total_global) * 100) if total_global > 0 else 0
     
@@ -121,13 +130,11 @@ div[data-testid="column"] { background: transparent; }
 
         total = len(children)
         if total > 0:
-            done_count = len(children[children['status'].isin(['SIM', 'NÃO SE APLICA'])])
-            pending_count = total - done_count
-            pct = int((done_count / total) * 100)
+            done = len(children[children['status'].isin(['SIM', 'NÃO SE APLICA'])])
+            pending = total - done
+            pct = int((done / total) * 100)
         else:
-            done_count = 0
-            pending_count = 0
-            pct = 0
+            pct, done, pending = 0, 0, 0
  
         if pct == 100:
             border_color = STATUS_COLORS["SIM"]
