@@ -145,9 +145,9 @@ def render_dashboard(dm):
         if not pending_df.empty:
             gargalos = pending_df['sector'].value_counts().reset_index().head(5)
             gargalos.columns = ['Setor', 'Qtd']
-            fig_bar = px.bar(gargalos, x='Qtd', y='Setor', orientation='h', color_discrete_sequence=['#E37026'])
+            fig_bar = px.bar(gargalos, x='Qtd', y='Setor', orientation='h', color_discrete_sequence=['#E37026'], textposition='outside')
             fig_bar = update_fig_layout(fig_bar)
-            fig_bar.update_layout(yaxis=dict(autorange="reversed", textposition="outside"))
+            fig_bar.update_layout(yaxis=dict(autorange="reversed"))
             st.plotly_chart(fig_bar, use_container_width=True)
         else:
             st.success("Sem pendências críticas.")
