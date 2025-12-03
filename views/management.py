@@ -76,7 +76,7 @@ div[data-testid="column"] {
     c1, c2, c3 = st.columns([2, 1, 1])
     with c1:
         st.markdown(f"""
-        <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 5.0rem; color: white; letter-spacing: 2px;"> {project_name}</span>
+        <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 2.0rem; color: white; letter-spacing: 2px;"> {project_name}</span>
         """, unsafe_allow_html=True)
     with c2:
         unique_sectors = sorted([s for s in df['sector'].dropna().unique() if str(s).strip() != ""])
