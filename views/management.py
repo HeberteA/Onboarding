@@ -61,21 +61,21 @@ div[data-testid="column"] { background: transparent; }
         sel_status = st.selectbox("Status", ["Todos"] + list(STATUS_COLORS.keys()))
 
     st.markdown("<div style='margin-bottom: 25px'></div>", unsafe_allow_html=True)
-    
-    df['status'] = df['status'].astype(str).str.strip().str.upper()
-    df['status'] = df['status'].replace({
-        'NAO SE APLICA': 'NÃO SE APLICA',
-        'NAO INICIADO': 'NÃO INICIADO',
-        'CONCLUIDO': 'SIM',
-        'OK': 'SIM'
-    })
+
+
+
+
+
+
+
+
 
     total_global = len(df)
     done_global = len(df[df['status'].isin(['SIM', 'NÃO SE APLICA'])])
     pending_global = total_global - done_global
-    pending_global = total_global - done_global
+
     pct_global = int((done_global / total_global) * 100) if total_global > 0 else 0
-    
+
     hero_bar_color = "#22c55e" if pct_global == 100 else "#3b82f6"
 
     st.markdown(f"""
@@ -110,7 +110,7 @@ div[data-testid="column"] { background: transparent; }
 
     for root in unique_roots:
         group_df = df[df['root_id'] == root]
-        
+
         parent_mask = (group_df['item_number'] == root) | (group_df['item_number'] == f"{root}.0")
         parent_row = group_df[parent_mask]
         children = group_df[~parent_mask]
@@ -130,12 +130,14 @@ div[data-testid="column"] { background: transparent; }
 
         total = len(children)
         if total > 0:
-            done = len(children[children['status'].isin(['SIM', 'NÃO SE APLICA'])])
-            pending = total - done
-            pct = int((done / total) * 100)
+            done_count = len(children[children['status'].isin(['SIM', 'NÃO SE APLICA'])])
+            pending_count = total - done_count
+            pct = int((done_count / total) * 100)
         else:
-            pct, done, pending = 0, 0, 0
- 
+            done_count = 0
+            pending_count = 0
+            pct = 0
+
         if pct == 100:
             border_color = STATUS_COLORS["SIM"]
             progress_bar_color = STATUS_COLORS["SIM"]
@@ -178,18 +180,18 @@ div[data-testid="column"] { background: transparent; }
                 current_status = row['status']
                 if current_status not in STATUS_COLORS: current_status = "PENDENTE"
                 status_color = STATUS_COLORS.get(current_status, "#64748b")
-                
+
                 with st.container():
                     c_vis, c_info, c_act = st.columns([0.05, 3.5, 1.2])
-                    
+
                     with c_vis:
                         st.markdown(f"""<div style="height:100%; min-height:55px; width:4px; background:{status_color}; border-radius:4px; margin-top:4px;"></div>""", unsafe_allow_html=True)
-                    
+
                     with c_info:
                         st.markdown(f"<div style='font-weight:500; color:#fff; font-size:0.95rem;'>{row['item_number']} - {row['title']}</div>", unsafe_allow_html=True)
                         if row['description']:
                             st.markdown(f"<div style='color:#aaa; font-size:0.85rem; margin-top:3px; line-height:1.4;'>{row['description']}</div>", unsafe_allow_html=True)
-                        
+
                         tags = []
                         if row['responsible']:
                             tags.append(f"<span style='background:rgba(227, 112, 38, 0.15); padding:2px 8px; border-radius:4px; font-size:0.7rem; color:#E37026; border:1px solid rgba(227, 112, 38, 0.2);'> {row['responsible']}</span>")
@@ -199,19 +201,19 @@ div[data-testid="column"] { background: transparent; }
                             tags.append(f"<span style='background:rgba(59, 130, 246, 0.1); padding:2px 8px; border-radius:4px; font-size:0.7rem; color:#60a5fa; border:1px solid rgba(59, 130, 246, 0.2);'> {row['stage']}</span>")
                         if row['area']: 
                             tags.append(f"<span style='background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:4px; font-size:0.7rem; color:#ccc; border:1px solid rgba(255,255,255,0.1);'>{row['area']}</span>")
-                        
+
                         if tags:
                             st.markdown(f"<div style='margin-top:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;'>{''.join(tags)}</div>", unsafe_allow_html=True)
                     with c_act:
                         key_unique = f"st_{project_id}_{row['task_id']}"
                         opts = list(STATUS_COLORS.keys())
-                        
+
                         def on_change(tid=row['task_id'], pid=project_id, k=key_unique):
                             dm.update_single_status(pid, tid, st.session_state[k])
 
                         idx = opts.index(current_status) if current_status in opts else 1
                         st.selectbox("Status", opts, index=idx, key=key_unique, on_change=on_change, label_visibility="collapsed")
-                
+
                 st.markdown("<div style='border-bottom:1px solid rgba(255,255,255,0.05); margin: 10px 0;'></div>", unsafe_allow_html=True)
 
     if not found_any:
