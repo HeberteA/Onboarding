@@ -26,6 +26,13 @@ def render_dashboard(dm):
         st.info("Nenhum dado encontrado.")
         return
 
+    df_all['status'] = df_all['status'].astype(str).str.strip().str.upper()
+    df_all['status'] = df_all['status'].replace({
+        'NAO SE APLICA': 'NÃO SE APLICA',
+        'NAO INICIADO': 'NÃO INICIADO',
+        'CONCLUIDO': 'SIM',
+        'OK': 'SIM'
+    })
     projects_list = sorted(df_all['project_name'].unique().tolist())
     
     c_filter, c_kpi_space = st.columns([1, 3])
