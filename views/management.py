@@ -44,7 +44,7 @@ div[data-testid="column"] { background: transparent; }
 </style>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"# Obra:")
+    st.markdown(f"#### Obra:")
 
     df = dm.get_project_data(project_id)
     if df.empty:
