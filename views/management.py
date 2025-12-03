@@ -51,7 +51,7 @@ div[data-testid="column"] { background: transparent; }
         return
 
     c1, c2, c3 = st.columns([2, 1, 1])
-    with c1;
+    with c1:
         st.markdown(f"## {project_name}")
     with c2:
         unique_sectors = sorted([s for s in df['sector'].dropna().unique() if str(s).strip() != ""])
