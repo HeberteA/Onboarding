@@ -136,7 +136,6 @@ def render_dashboard(dm):
                 df_sun['count'] = 1
                 fig = px.sunburst(df_sun, path=['stage', 'sector', 'status'], values='count', color='status', color_discrete_map=COLOR_MAP)
                 fig.update_layout(margin=dict(t=0, l=0, r=0, b=0), paper_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter"))
-                fig.update_traces(textposition='inside')
                 st.plotly_chart(fig, use_container_width=True)
             except: st.info("Dados insuficientes.")
 
@@ -149,6 +148,7 @@ def render_dashboard(dm):
             fig_bar = px.bar(gargalos, x='Qtd', y='Setor', orientation='h', color_discrete_sequence=['#E37026'])
             fig_bar = update_fig_layout(fig_bar)
             fig_bar.update_layout(yaxis=dict(autorange="reversed"))
+            fig_bar.update_traces(textposition='inside')
             st.plotly_chart(fig_bar, use_container_width=True)
         else:
             st.success("Sem pendências críticas.")
