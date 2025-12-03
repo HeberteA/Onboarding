@@ -54,6 +54,7 @@ class DataManager:
             SELECT 
                 p.name as project_name,
                 p.id as project_id,
+                t.item_number, -- ADICIONADO: Necessário para diferenciar fase de atividade
                 t.stage,
                 s.name as sector,
                 r.name as responsible,
@@ -66,7 +67,6 @@ class DataManager:
         """)
         with self._engine.connect() as conn:
             return pd.read_sql(query, conn)
-
 
     def get_all_tasks_admin(self):
         """Busca todas as tarefas para edição (CRUD) com nomes de dependências."""
