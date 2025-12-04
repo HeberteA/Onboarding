@@ -6,6 +6,7 @@ import os
 from views.dashboard import render_dashboard
 from views.management import render_management
 from views.settings import render_settings
+from views.projects import render_projects
 
 st.set_page_config(page_title="Lavie Onboarding", layout="wide", initial_sidebar_state="expanded", page_icon="Lavie1.png")
 
@@ -77,8 +78,8 @@ def main():
         st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
         menu = option_menu(
             menu_title=None,
-            options=["Gestão",  "Configurações", "Dashboard"],
-            icons=["grid", "gear", "kanban"], 
+            options=["Gestão", "Obras", "Configurações", "Dashboard"],
+            icons=["grid", "building", "gear", "kanban"], 
             default_index=0,
             styles={
                 "container": {"padding": "0!important", "background": "transparent"},
@@ -132,6 +133,9 @@ def main():
         if selected_pid:
             project_name = proj_dict[selected_pid]
             render_management(dm, selected_pid, project_name)
+
+    elif menu == "Obras": 
+        render_projects(dm)
     
     elif menu == "Configurações":
         render_settings(dm)
