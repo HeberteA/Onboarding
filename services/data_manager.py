@@ -19,12 +19,23 @@ class DataManager:
         with self._engine.connect() as conn:
             return pd.read_sql("SELECT id, name FROM projects ORDER BY name", conn)
 
+    def get_project_details(self, project_id):
+        """NOVO: Busca detalhes específicos (Categoria) de uma obra"""
+        if not self._engine: return None
+        try:
+            with self._engine.connect() as conn:
+                res = conn.execute(
+                    text("SELECT name, category FROM projects WHERE id = :id"), 
+                    {"id": project_id}
+                ).fetchone()
+                return dict(res._mapping) if res else None
+        except: return None
+
     def get_project_data(self, project_id):
-        """Busca dados para a tela de Gestão (Incluindo Nome da Fase)"""
         if not self._engine: return pd.DataFrame()
         query = text("""
             SELECT 
-                p.title as phase_title, -- Nome real da fase (Ex: CONTRATOS)
+                p.title as phase_title,
                 t.id as task_id, 
                 t.item_number, 
                 t.title, 
@@ -45,54 +56,28 @@ class DataManager:
             return pd.read_sql(query, conn, params={"pid": project_id})
 
     def get_global_dashboard_data(self):
-        """Busca dados para o Dashboard Global"""
         if not self._engine: return pd.DataFrame()
         query = text("""
-            SELECT 
-                pr.name as project_name,
-                ph.title as phase_title,
-                t.item_number,
-                t.stage,
-                s.name as sector,
-                r.name as responsible,
-                COALESCE(pt.status, 'NÃO INICIADO') as status
-            FROM tasks t
-            CROSS JOIN projects pr
-            JOIN phases ph ON t.phase_id = ph.id
+            SELECT pr.name as project_name, ph.title as phase_title, t.item_number, t.stage, s.name as sector, r.name as responsible, COALESCE(pt.status, 'NÃO INICIADO') as status
+            FROM tasks t CROSS JOIN projects pr JOIN phases ph ON t.phase_id = ph.id
             LEFT JOIN project_tasks pt ON t.id = pt.task_id AND pt.project_id = pr.id
-            LEFT JOIN sectors s ON t.sector_id = s.id
-            LEFT JOIN responsibles r ON t.default_responsible_id = r.id
+            LEFT JOIN sectors s ON t.sector_id = s.id LEFT JOIN responsibles r ON t.default_responsible_id = r.id
         """)
-        with self._engine.connect() as conn:
-            return pd.read_sql(query, conn)
+        with self._engine.connect() as conn: return pd.read_sql(query, conn)
 
     def get_all_tasks_admin(self):
         if not self._engine: return pd.DataFrame()
-        query = text("""
-            SELECT t.id, t.item_number, t.title, t.description, t.area, t.stage,
-                   s.name as sector_name, r.name as resp_name
-            FROM tasks t
-            LEFT JOIN sectors s ON t.sector_id = s.id
-            LEFT JOIN responsibles r ON t.default_responsible_id = r.id
-            ORDER BY NULLIF(regexp_replace(t.item_number, '[^0-9.]', '', 'g'), '')::numeric
-        """)
-        with self._engine.connect() as conn:
-            return pd.read_sql(query, conn)
+        query = text("SELECT t.id, t.item_number, t.title, t.description, t.area, t.stage, s.name as sector_name, r.name as resp_name FROM tasks t LEFT JOIN sectors s ON t.sector_id = s.id LEFT JOIN responsibles r ON t.default_responsible_id = r.id ORDER BY NULLIF(regexp_replace(t.item_number, '[^0-9.]', '', 'g'), '')::numeric")
+        with self._engine.connect() as conn: return pd.read_sql(query, conn)
 
     def get_aux_list(self, table):
         if not self._engine or table not in ['sectors', 'responsibles']: return pd.DataFrame()
-        with self._engine.connect() as conn:
-            return pd.read_sql(f"SELECT id, name FROM {table} ORDER BY name", conn)
+        with self._engine.connect() as conn: return pd.read_sql(f"SELECT id, name FROM {table} ORDER BY name", conn)
 
     def update_single_status(self, project_id, task_id, status):
-        stmt = text("""
-            INSERT INTO project_tasks (project_id, task_id, status, updated_at)
-            VALUES (:pid, :tid, :st, NOW())
-            ON CONFLICT (project_id, task_id) DO UPDATE SET status = EXCLUDED.status, updated_at = NOW()
-        """)
+        stmt = text("INSERT INTO project_tasks (project_id, task_id, status, updated_at) VALUES (:pid, :tid, :st, NOW()) ON CONFLICT (project_id, task_id) DO UPDATE SET status = EXCLUDED.status, updated_at = NOW()")
         try:
-            with self._engine.begin() as conn:
-                conn.execute(stmt, {"pid": project_id, "tid": task_id, "st": status})
+            with self._engine.begin() as conn: conn.execute(stmt, {"pid": project_id, "tid": task_id, "st": status})
             return True
         except: return False
 
@@ -104,10 +89,7 @@ class DataManager:
             for index, row in df_edited.iterrows():
                 sid = sec_map.get(row['sector_name'])
                 rid = resp_map.get(row['resp_name'])
-                conn.execute(text("""
-                    UPDATE tasks SET description=:d, area=:a, stage=:stg, sector_id=:sid, default_responsible_id=:rid
-                    WHERE id=:id
-                """), {"d": row['description'], "a": row['area'], "stg": row['stage'], "sid": sid, "rid": rid, "id": row['id']})
+                conn.execute(text("UPDATE tasks SET description=:d, area=:a, stage=:stg, sector_id=:sid, default_responsible_id=:rid WHERE id=:id"), {"d": row['description'], "a": row['area'], "stg": row['stage'], "sid": sid, "rid": rid, "id": row['id']})
 
     def update_aux_list(self, table, df_changes):
         if not self._engine or table not in ['sectors', 'responsibles']: return
@@ -115,62 +97,34 @@ class DataManager:
             for index, row in df_changes.iterrows():
                 name = str(row['name']).strip().upper()
                 if not name: continue
-                if pd.notna(row.get('id')):
-                    conn.execute(text(f"UPDATE {table} SET name=:n WHERE id=:id"), {"n": name, "id": int(row['id'])})
+                if pd.notna(row.get('id')): conn.execute(text(f"UPDATE {table} SET name=:n WHERE id=:id"), {"n": name, "id": int(row['id'])})
                 else:
                     exists = conn.execute(text(f"SELECT 1 FROM {table} WHERE name=:n"), {"n": name}).scalar()
-                    if not exists:
-                        conn.execute(text(f"INSERT INTO {table} (name) VALUES (:n)"), {"n": name})
-
+                    if not exists: conn.execute(text(f"INSERT INTO {table} (name) VALUES (:n)"), {"n": name})
+    
     def get_projects_summary(self):
-        """
-        Retorna lista de projetos com Categoria e Progresso calculado no SQL.
-        Performance Sênior: 1 Query única em vez de N queries.
-        """
         if not self._engine: return pd.DataFrame()
-        query = text("""
-            SELECT 
-                p.id, 
-                p.name, 
-                COALESCE(p.category, 'NÃO DEFINIDO') as category,
-                COUNT(pt.task_id) as total_tasks,
-                COUNT(CASE WHEN pt.status IN ('SIM', 'NÃO SE APLICA') THEN 1 END) as done_tasks
-            FROM projects p
-            LEFT JOIN project_tasks pt ON p.id = pt.project_id
-            GROUP BY p.id, p.name, p.category
-            ORDER BY p.name
-        """)
-        with self._engine.connect() as conn:
-            return pd.read_sql(query, conn)
+        query = text("""SELECT p.id, p.name, COALESCE(p.category, 'NÃO DEFINIDO') as category, COUNT(pt.task_id) as total_tasks, COUNT(CASE WHEN pt.status IN ('SIM', 'NÃO SE APLICA') THEN 1 END) as done_tasks FROM projects p LEFT JOIN project_tasks pt ON p.id = pt.project_id GROUP BY p.id, p.name, p.category ORDER BY p.name""")
+        with self._engine.connect() as conn: return pd.read_sql(query, conn)
 
     def save_project(self, name, category, project_id=None):
-        """Cria ou Atualiza um projeto"""
         if not self._engine: return False
-        
         name = name.strip().upper()
         category = category.strip().upper()
-        
         try:
             with self._engine.begin() as conn:
-                if project_id:
-                    conn.execute(text("UPDATE projects SET name=:n, category=:c WHERE id=:id"), 
-                                 {"n": name, "c": category, "id": project_id})
-                else:
-                    conn.execute(text("INSERT INTO projects (name, category) VALUES (:n, :c)"), 
-                                 {"n": name, "c": category})
+                if project_id: conn.execute(text("UPDATE projects SET name=:n, category=:c WHERE id=:id"), {"n": name, "c": category, "id": project_id})
+                else: conn.execute(text("INSERT INTO projects (name, category) VALUES (:n, :c)"), {"n": name, "c": category})
             return True
         except Exception as e:
-            st.error(f"Erro ao salvar: {e}")
+            st.error(f"Erro: {e}")
             return False
 
     def delete_project(self, project_id):
-        """Exclui projeto e seus vínculos (Cuidado!)"""
         if not self._engine: return False
         try:
             with self._engine.begin() as conn:
                 conn.execute(text("DELETE FROM project_tasks WHERE project_id=:id"), {"id": project_id})
                 conn.execute(text("DELETE FROM projects WHERE id=:id"), {"id": project_id})
             return True
-        except Exception as e:
-            st.error(f"Erro ao excluir: {e}")
-            return False
+        except: return False
