@@ -21,9 +21,8 @@ div[data-testid="column"] {
 
 /* Expander Header Minimalista */
 .streamlit-expanderHeader {
-    background-color: transparent !important;
-    background-image: linear-gradient(160deg, #2b2b2b 0%, #0a0a0c 100%) !important;
-    
+    background-color: transparent; 
+    background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%);
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     padding: 30px;
     border-radius: 10px !important;
@@ -43,6 +42,8 @@ div[data-testid="column"] {
 }
 /* Selectbox Style */
 .stSelectbox div[data-baseweb="select"] > div {
+    background-color: transparent; 
+    background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%);
     border-radius: 6px !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
     font-size: 0.85rem !important;
@@ -198,7 +199,7 @@ div[data-testid="column"] {
                     c_vis, c_info, c_act = st.columns([0.05, 3.5, 1.2])
 
                     with c_vis:
-                        st.markdown(f"""<div style="height:100%; min-height:55px; width:4px; background:{status_color}; border-radius:4px; margin-top:4px;"></div>""", unsafe_allow_html=True)
+                        st.markdown(f"""<div style="height:100%; min-height:60px; width:4px; background:{status_color}; border-radius:4px; margin-top:4px;"></div>""", unsafe_allow_html=True)
 
                     with c_info:
                         st.markdown(f"<div style='font-weight:500; color:#fff; font-size:0.95rem;'>{row['item_number']} - {row['title']}</div>", unsafe_allow_html=True)
@@ -226,6 +227,7 @@ div[data-testid="column"] {
                             dm.update_single_status(pid, tid, st.session_state[k])
 
                         idx = opts.index(current_status) if current_status in opts else 1
+                        st.markdown("")
                         st.selectbox("Status", opts, index=idx, key=key_unique, on_change=on_change, label_visibility="collapsed")
 
                 st.markdown("<div style='border-bottom:1px solid rgba(255,255,255,0.05); margin: 10px 0;'></div>", unsafe_allow_html=True)
