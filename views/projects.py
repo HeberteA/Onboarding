@@ -64,7 +64,6 @@ def render_projects(dm):
                                 <span style="font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:5px;">{row['name']}</span>
                                 <span style="font-weight:700; color:{bar_color};">{pct}%</span>
                             </div>
-                            
                             <div class="category-badge">{row['category']}</div>
                             <div style="font-size:0.8rem; color:#888; margin-bottom:15px;">
                                 {done}/{total} atividades concluídas
