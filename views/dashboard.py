@@ -168,7 +168,7 @@ def render_dashboard(dm):
             pareto_data['Acumulado'] = pareto_data['Qtd'].cumsum() / pareto_data['Qtd'].sum() * 100
             
             fig = go.Figure()
-            fig.add_trace(go.Bar(x=pareto_data['Setor'], y=pareto_data['Qtd'], name='Pendências', text=pareto_data['Qtd'], marker_color='#E37026', opacity=0.8))
+            fig.add_trace(go.Bar(x=pareto_data['Setor'], y=pareto_data['Qtd'], name='Pendências', text=pareto_data['Qtd'], marker_color='#ff6503', opacity=0.8))
             fig.add_trace(go.Scatter(x=pareto_data['Setor'], y=pareto_data['Acumulado'], name='Impacto %',  yaxis='y2', line=dict(color='#3b82f6', width=2), mode='lines+markers'))
             
             fig.update_layout(
