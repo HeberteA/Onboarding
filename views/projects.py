@@ -9,7 +9,8 @@ def render_projects(dm):
     <style>
         /* Card Estilizado */
         div.project-card {
-            background: rgba(255, 255, 255, 0.03);
+            background-color: transparent; 
+            background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 20px;
@@ -78,12 +79,10 @@ def render_projects(dm):
                         c_edit, _, _, c_del = st.columns([1.5, 2, 2, 1.5])
                         
                         with c_edit:
-                            st.markdown("")
                             if st.button("Editar", key=f"edit_{row['id']}", use_container_width=True):
                                 edit_project_dialog(dm, row)
                         
                         with c_del:
-                            st.markdown("")
                             if st.button("🗑️", key=f"del_{row['id']}", use_container_width=True):
                                 delete_project_dialog(dm, row)
 
