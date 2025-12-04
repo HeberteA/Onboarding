@@ -96,7 +96,6 @@ div[data-testid="column"] {
 
     hero_bar_color = "#35BE53" if pct_global == 100 else "#3b82f6"
 
-    # HTML CORRIGIDO (Dedent para evitar erro de renderização)
     st.markdown(textwrap.dedent(f"""
     <div style="background-color: transparent !important; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.9) !important; padding: 20px; border-radius: 10px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
@@ -132,15 +131,13 @@ div[data-testid="column"] {
     for root in unique_roots:
         group_df = df[df['root_id'] == root]
 
-        parent_mask = (group_df['item_number'] == root) | (group_df['item_number'] == f"{root}.0")
-        parent_row = group_df[parent_mask]
-        children = group_df[~parent_mask]
-
-        if not parent_row.empty:
-            p_title = parent_row.iloc[0]['title']
-            phase_label = f"{root} - {p_title}"
+        if not group_df.empty:
+            phase_name_db = group_df.iloc[0]['phase_title'] 
+            phase_label = f"{root} - {phase_name_db}"
         else:
             phase_label = f"FASE {root}"
+
+        children = group_df
 
         filtered_children = children.copy()
         if sel_sector != "Todos": filtered_children = filtered_children[filtered_children['sector'] == sel_sector]
