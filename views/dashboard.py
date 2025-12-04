@@ -164,7 +164,7 @@ def render_dashboard(dm):
             pareto_data['Acumulado'] = pareto_data['Qtd'].cumsum() / pareto_data['Qtd'].sum() * 100
             
             fig = go.Figure()
-            fig.add_trace(go.Bar(x=pareto_data['Setor'], y=pareto_data['Qtd'], name='Pendências', marker_color='#E37026', opacity=0.8))
+            fig.add_trace(go.Bar(x=pareto_data['Setor'], y=pareto_data['Qtd'], name='Pendências', text=pareto_data['Qtd'], marker_color='#E37026', opacity=0.8))
             fig.add_trace(go.Scatter(x=pareto_data['Setor'], y=pareto_data['Acumulado'], name='Impacto %', yaxis='y2', line=dict(color='#3b82f6', width=2), mode='lines+markers'))
             
             fig.update_layout(
@@ -198,12 +198,12 @@ def render_dashboard(dm):
                 text=df_stage['Progresso'].apply(lambda x: f"{int(x)}%"),
                 color='Progresso', color_continuous_scale=['#334155', '#22c55e']
             )
-            fig_bar = style_chart(fig_bar)
+            fig_bar = style_chart(fig_bar) 
             fig_bar.update_yaxes(autorange="reversed")
             st.plotly_chart(fig_bar, use_container_width=True)
         else:
             st.info("Sem dados de etapas.")
-
+            
     st.markdown("---")
 
     st.markdown("#### Mapa de Calor: Responsáveis")
@@ -221,7 +221,7 @@ def render_dashboard(dm):
         heatmap_data = df_heat.pivot(index='responsible', columns=group_col, values='Qtd').fillna(0)
         fig_heat = px.imshow(
             heatmap_data, labels=dict(x=x_label, y="Responsável", color="Pendências"),
-            color_continuous_scale='Magma', aspect="auto"
+            color_continuous_scale='Magma', aspect="auto", text_auto=True
         )
         fig_heat.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter", color="#cbd5e1"), margin=dict(t=10, l=0, r=0, b=0))
         st.plotly_chart(fig_heat, use_container_width=True)
