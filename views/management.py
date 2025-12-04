@@ -51,45 +51,51 @@ div[data-testid="column"] {
 </style>
     """, unsafe_allow_html=True)
 
-    st.markdown("##### Obra:")
+    proj_details = dm.get_project_details(project_id)
+    category = proj_details.get("category", "GERAL") if proj_details else "GERAL"
+
+    st.markdown(f"""
+    <div style="margin-bottom: 20px;">
+        <span style="font-family: 'Inter'; font-size: 0.75rem; color: #888; letter-spacing: 1px; text-transform: uppercase;">GERENCIAMENTO DE OBRA</span>
+        <div style="display: flex; align-items: center; gap: 15px; margin-top: 5px;">
+            <span style="font-family: 'Inter'; font-weight: 700; font-size: 2.5rem; color: white; letter-spacing: 1px;">{project_name}</span>
+            <span style="background: rgba(227, 112, 38, 0.15); border: 1px solid rgba(227, 112, 38, 0.5); color: #E37026; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px;">{category}</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     df = dm.get_project_data(project_id)
     if df.empty:
         st.info("Nenhuma atividade cadastrada.")
         return
-    df['status'] = df['status'].astype(str).str.strip().str.upper()
-    df['status'] = df['status'].replace({
-        'NAO SE APLICA': 'NÃO SE APLICA',
-        'NAO INICIADO': 'NÃO INICIADO',
-        'CONCLUIDO': 'SIM',
-        'OK': 'SIM'
-    })
 
-    df_activities = df[
-        (df['item_number'].astype(str).str.contains(r'\.', regex=True)) & 
-        (~df['item_number'].astype(str).str.endswith('.0'))
-    ]
-    
-    total_global = len(df_activities)
-
+    total_global = len(df)
     if total_global > 0:
-        done_global = len(df_activities[df_activities['status'].isin(['SIM', 'NÃO SE APLICA'])])
+        done_global = len(df[df['status'].isin(['SIM', 'NÃO SE APLICA'])])
         pending_global = total_global - done_global
         pct_global = int((done_global / total_global) * 100)
     else:
-        done_global = 0
-        pending_global = 0
-        pct_global = 0
+        done_global, pending_global, pct_global = 0, 0, 0
 
-    c1, c2, c3 = st.columns([2, 1, 1])
-    with c1:
-        st.markdown(f"""
-        <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 3.75rem; color: white; letter-spacing: 2px;"> {project_name}</span>
-        """, unsafe_allow_html=True)
-    with c2:
+    hero_bar_color = "#35BE53" if pct_global == 100 else "#3b82f6"
+
+    c_hud, c_filt = st.columns([1.8, 1])
+    
+    with c_hud:
+        st.markdown(textwrap.dedent(f"""
+        <div style="background-color: transparent; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%); border: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
+                <div><div style="font-size: 0.75rem; color: #FFFFFF; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">Status Geral</div><div style="font-size: 2rem; font-weight: 700; color: #fff;">{pct_global}% <span style="font-size:1rem; color:#888;">Concluído</span></div></div>
+                <div style="text-align: right;"><div style="font-size:1rem; font-weight:600; color:#ccc;">{done_global} <span style="color:#666;">/ {total_global}</span></div><div style="color:#f59e0b; font-size:0.85rem;">{pending_global} Pendentes</div></div>
+            </div>
+            <div style="width: 100%; height: 10px; background-color: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden;"><div style="width: {pct_global}%; height: 100%; background-color: {hero_bar_color}; transition: width 1s;"></div></div>
+        </div>
+        """), unsafe_allow_html=True)
+
+    with c_filt:
+        st.markdown("<div style='height:5px'></div>", unsafe_allow_html=True)
         unique_sectors = sorted([s for s in df['sector'].dropna().unique() if str(s).strip() != ""])
         sel_sector = st.selectbox("Setor", ["Todos"] + unique_sectors)
-    with c3:
         sel_status = st.selectbox("Status", ["Todos"] + list(STATUS_COLORS.keys()))
 
     st.markdown("<div style='margin-bottom: 25px'></div>", unsafe_allow_html=True)
@@ -97,7 +103,7 @@ div[data-testid="column"] {
     hero_bar_color = "#35BE53" if pct_global == 100 else "#3b82f6"
 
     st.markdown(textwrap.dedent(f"""
-    <div style="background-color: transparent !important; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.9) !important; padding: 20px; border-radius: 10px;">
+    <div style="background-color: transparent !important; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.9) !important;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
             <div>
                 <div style="font-size: 0.75rem; color: #FFFFFF; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Status Geral da Obra</div>
