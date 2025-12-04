@@ -122,7 +122,7 @@ def render_dashboard(dm):
                 text=df_proj['Progresso'].apply(lambda x: f"{int(x)}%"),
                 color='Progresso', color_continuous_scale=['#333', '#3b82f6']
             )
-            fig = update_fig_layout(fig)
+            fig = style_chart(fig)
             fig.update_layout(coloraxis_showscale=False)
             st.plotly_chart(fig, use_container_width=True)
         else:
@@ -144,7 +144,7 @@ def render_dashboard(dm):
             gargalos = pending_df['sector'].value_counts().reset_index().head(5)
             gargalos.columns = ['Setor', 'Qtd']
             fig_bar = px.bar(gargalos, x='Qtd', y='Setor', orientation='h', color_discrete_sequence=['#E37026'], text="Qtd")
-            fig_bar = update_fig_layout(fig_bar)
+            fig_bar = style_chart(fig_bar)
             fig_bar.update_layout(yaxis=dict(autorange="reversed"))
             fig.update_traces(textposition='outside')
             st.plotly_chart(fig_bar, use_container_width=True)
