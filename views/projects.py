@@ -68,7 +68,6 @@ def render_projects(dm):
                             </div>
                             <div style="font-size:0.8rem; color:#888; margin-bottom:15px;">
                                 {done}/{total} atividades concluídas
-                            </div>
                             <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; margin-bottom:15px;">
                                 <div style="width:{pct}%; height:100%; background:{bar_color};"></div>
                             </div>
