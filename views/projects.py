@@ -67,7 +67,8 @@ def render_projects(dm):
                                 </div>
                                 <div><span class="category-badge">{row['category']}</span>
                             </div>
-                                <div>
+                            <div>
+                            </div>
                                 <div style="font-size:0.8rem; color:#888; margin-bottom:15px;">
                                     <span>Progresso</span>
                                     <span>{done}/{total}</span>
