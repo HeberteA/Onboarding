@@ -33,6 +33,7 @@ def render_projects(dm):
             font-size: 0.65rem; 
             font-weight: 600; 
             letter-spacing: 1px;
+            margin-bottom: 5px;
         }
     </style>
     """, unsafe_allow_html=True)
