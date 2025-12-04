@@ -160,7 +160,7 @@ div[data-testid="column"] {
             progress_bar_color = "#3b82f6"
 
         html_card = textwrap.dedent(f"""
-<div style="background-color: transparent; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid {border_color}; border-radius: 8px; padding: 15px 20px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px);">
+<div style="background-color: transparent; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 3px solid {border_color}; border-radius: 8px; padding: 15px 20px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px);">
     <div style="font-weight: 600; color: #ffffff; font-size: 1.05rem; letter-spacing: 0.5px; flex-grow: 1;">
         {phase_label}
     </div>
