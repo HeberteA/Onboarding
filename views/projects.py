@@ -15,6 +15,8 @@ def render_projects(dm):
             border-radius: 8px;
             padding: 20px;
             transition: transform 0.2s;
+            margin-top: 10px;    
+            margin-bottom: 20px;
         }
         div.project-card:hover {
             border-color: #E37026;
