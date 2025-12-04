@@ -195,7 +195,7 @@ def render_dashboard(dm):
         if not df_stage.empty:
             fig_bar = px.bar(
                 df_stage, x='Progresso', y='Etapa', orientation='h',
-                text=df_stage['Progresso'].apply(lambda x: f"{int(x)}%"),
+                text=df_stage['Progresso'].apply(lambda x: f"{int(x)}%"), 
                 color='Progresso', color_continuous_scale=['#334155', '#22c55e']
             )
             fig_bar = style_chart(fig_bar) 
