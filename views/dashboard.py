@@ -80,7 +80,7 @@ def render_dashboard(dm):
     
     with k1: st.markdown(metric_card("Total", total, "Atividades", "#888"), unsafe_allow_html=True)
     with k2: st.markdown(metric_card("Progresso", f"{progresso}%", f"{done} Concluídos", "#22c55e"), unsafe_allow_html=True)
-    with k3: st.markdown(metric_card("A Fazer", pending, "Andamento / Pendentes", "#f59e0b"), unsafe_allow_html=True)
+    with k3: st.markdown(metric_card("Risco", pending, "Andamento / Pendentes", "#f59e0b"), unsafe_allow_html=True)
     
     df_not_done = df_calc[~df_calc['status'].isin(['SIM', 'NÃO SE APLICA'])]
 
