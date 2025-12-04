@@ -66,7 +66,7 @@ def render_projects(dm):
                             <div>
                                 <div style="display:flex; justify-content:space-between; align-items:start;">
                                     <span style="font-size:1.1rem; font-weight:700; color:#fff; line-height:1.0;">{row['name']}</span>
-                                    <span style="font-weight:700; color:{bar_color}; margin-bottom:2px;">{pct}%</span>
+                                    <span style="font-weight:700; color:{bar_color};">{pct}%</span>
                                 </div>
                                 <span class="category-badge">{row['category']}</span>
                             </div>
