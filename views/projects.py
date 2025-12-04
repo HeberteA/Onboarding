@@ -26,7 +26,7 @@ def render_projects(dm):
             background: rgba(227, 112, 38, 0.15); 
             border: 1px solid rgba(227, 112, 38, 0.5); 
             color: #E37026; 
-            padding: 4px 8px;
+            padding: 8px 8px;
             border-radius: 4px;
             font-size: 0.65rem; 
             font-weight: 600; 
