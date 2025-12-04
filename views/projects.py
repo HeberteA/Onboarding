@@ -15,6 +15,8 @@ def render_projects(dm):
             border-radius: 8px;
             padding: 20px;
             transition: transform 0.2s;
+            margin-top: 10px;    
+            margin-bottom: 20px;
         }
         div.project-card:hover {
             border-color: #E37026;
@@ -31,8 +33,6 @@ def render_projects(dm):
             font-size: 0.65rem; 
             font-weight: 600; 
             letter-spacing: 1px;
-            margin-top: 10px;    
-            margin-bottom: 20px;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -64,17 +64,17 @@ def render_projects(dm):
                         <div class="project-card">
                             <div>
                                 <div style="display:flex; justify-content:space-between; align-items:start;">
-                                    <span style="font-size:1.1rem; font-weight:700; color:#fff; line-height:1.5;">{row['name']}</span>
+                                    <span style="font-size:1.1rem; font-weight:700; color:#fff; line-height:1.0;">{row['name']}</span>
                                     <span style="font-weight:700; color:{bar_color};">{pct}%</span>
                                 </div>
                                 <div><span class="category-badge">{row['category']}</span></div>
                             </div>
                             <div>
                             </div>
-                                <div style="font-size:0.8rem; color:#888; margin-bottom:10px;">
+                                <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">
                                     <span>Progresso</span>
                                     <span>{done}/{total}</span>
-                                <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; margin-bottom:10px;">
+                                <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; margin-bottom:5px;">
                                     <div style="width:{pct}%; height:100%; background:{bar_color};"></div>
                                 </div>
                             </div>
