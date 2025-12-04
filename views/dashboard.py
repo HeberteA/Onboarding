@@ -228,7 +228,7 @@ def render_dashboard(dm):
         fig_heat = px.imshow(
             heatmap_data, 
             labels=dict(x=x_label, y="Responsável", color="Atividades Ativas"),
-            color_continuous_scale=['#301818', '#ff0000'], 
+            color_continuous_scale=['#47362c', '#ff6400'], 
             aspect="auto",
             text_auto=True 
         )
