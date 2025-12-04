@@ -219,13 +219,18 @@ def render_dashboard(dm):
         group_col = "sector"
         x_label = "Setor"
 
+    df_not_done = df_calc[~df_calc['status'].isin(['SIM', 'NÃO SE APLICA'])]
     df_heat = df_not_done.groupby([group_col, 'responsible']).size().reset_index(name='Qtd')
     
     if not df_heat.empty:
         heatmap_data = df_heat.pivot(index='responsible', columns=group_col, values='Qtd').fillna(0)
+        
         fig_heat = px.imshow(
-            heatmap_data, labels=dict(x=x_label, y="Responsável", color="Pendências"),
-            color_continuous_scale='Magma', aspect="auto", text_auto=True
+            heatmap_data, 
+            labels=dict(x=x_label, y="Responsável", color="Atividades Ativas"),
+            color_continuous_scale=['#000000', '#ef4444'], 
+            aspect="auto",
+            text_auto=True 
         )
         fig_heat.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter", color="#cbd5e1"), margin=dict(t=10, l=0, r=0, b=0))
         st.plotly_chart(fig_heat, use_container_width=True)
