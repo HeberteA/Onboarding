@@ -12,7 +12,7 @@ def render_projects(dm):
             background-color: transparent; 
             background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 20px;
             transition: transform 0.2s;
         }
