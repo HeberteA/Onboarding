@@ -95,7 +95,7 @@ def render_projects(dm):
         with st.form("new_project_form", clear_on_submit=True):
             col_a, col_b = st.columns([2, 1])
             with col_a:
-                new_name = st.text_input("Nome da Obra", placeholder="Ex: RESIDENCIAL SOLARIS")
+                new_name = st.text_input("Nome da Obra")
             with col_b:
                 new_cat = st.selectbox("Categoria", PROJECT_TYPES)
             
