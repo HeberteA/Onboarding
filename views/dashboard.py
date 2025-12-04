@@ -61,7 +61,8 @@ def render_dashboard(dm):
     total = len(df_calc)
     if total > 0:
         done = len(df_calc[df_calc['status'].isin(['SIM', 'NÃO SE APLICA'])])
-        pending = len(df_calc[df_calc['status'] == 'PENDENTE'])
+        pending = total - done
+        
         progresso = int((done / total) * 100)
     else:
         done, pending, progresso = 0, 0, 0
@@ -69,28 +70,30 @@ def render_dashboard(dm):
     k1, k2, k3, k4 = st.columns(4)
     
     def metric_card(label, val, sub, color):
-        return f"""
+        return textwrap.dedent(f"""
         <div style="background-color: transparent; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius:10px; padding:15px;">
             <div style="color:#888; font-size:0.75rem; text-transform:uppercase;">{label}</div>
             <div style="color:#fff; font-size:1.8rem; font-weight:700;">{val}</div>
             <div style="color:{color}; font-size:0.85rem;">{sub}</div>
         </div>
-        """
+        """)
     
     with k1: st.markdown(metric_card("Total", total, "Atividades", "#888"), unsafe_allow_html=True)
     with k2: st.markdown(metric_card("Progresso", f"{progresso}%", f"{done} Concluídos", "#22c55e"), unsafe_allow_html=True)
-    with k3: st.markdown(metric_card("Risco", pending, "Pendentes", "#f59e0b"), unsafe_allow_html=True)
+    with k3: st.markdown(metric_card("A Fazer", pending, "Ativos / Pendentes", "#f59e0b"), unsafe_allow_html=True)
     
+    df_not_done = df_calc[~df_calc['status'].isin(['SIM', 'NÃO SE APLICA'])]
+
     if sel_project == "Todas as Obras":
-        risk_proj = df_calc[df_calc['status'] == 'PENDENTE']['project_name'].value_counts()
+        risk_proj = df_not_done['project_name'].value_counts()
         top_risk = risk_proj.index[0] if not risk_proj.empty else "Nenhuma"
         val_risk = risk_proj.iloc[0] if not risk_proj.empty else 0
-        lbl_risk = "Obra com Mais Pendências"
+        lbl_risk = "Obra com Mais Ações"
     else:
-        risk_sec = df_calc[df_calc['status'] == 'PENDENTE']['sector'].value_counts()
+        risk_sec = df_not_done['sector'].value_counts()
         top_risk = risk_sec.index[0] if not risk_sec.empty else "Nenhum"
         val_risk = risk_sec.iloc[0] if not risk_sec.empty else 0
-        lbl_risk = "Gargalo no Setor"
+        lbl_risk = "Gargalo (Setor)"
         
     with k4: st.markdown(metric_card(lbl_risk, top_risk, f"{val_risk} Itens", "#E37026"), unsafe_allow_html=True)
 
@@ -158,8 +161,8 @@ def render_dashboard(dm):
         
         df_pending = df_calc[df_calc['status'] == 'PENDENTE']
         
-        if not df_pending.empty:
-            pareto_data = df_pending['sector'].value_counts().reset_index()
+        if not df_not_done.empty:
+            pareto_data = df_not_done['sector'].value_counts().reset_index()
             pareto_data.columns = ['Setor', 'Qtd']
             pareto_data['Setor'] = pareto_data['Setor'].astype(str)
             pareto_data['Acumulado'] = pareto_data['Qtd'].cumsum() / pareto_data['Qtd'].sum() * 100
@@ -216,7 +219,7 @@ def render_dashboard(dm):
         group_col = "sector"
         x_label = "Setor"
 
-    df_heat = df_calc[df_calc['status'] == 'PENDENTE'].groupby([group_col, 'responsible']).size().reset_index(name='Qtd')
+    df_heat = df_not_done.groupby([group_col, 'responsible']).size().reset_index(name='Qtd')
     
     if not df_heat.empty:
         heatmap_data = df_heat.pivot(index='responsible', columns=group_col, values='Qtd').fillna(0)
