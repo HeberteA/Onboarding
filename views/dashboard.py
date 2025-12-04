@@ -1,6 +1,8 @@
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go  
 import pandas as pd
+import textwrap
 
 COLOR_MAP = {
     "SIM": "#22c55e", "ANDAMENTO": "#3b82f6", "PENDENTE": "#f59e0b",
