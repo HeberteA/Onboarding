@@ -82,8 +82,10 @@ div[data-testid="column"] {
 
         unique_sectors = sorted([s for s in df['sector'].dropna().unique() if str(s).strip() != ""])
     with c2:
+        st.space("small")
         sel_sector = st.selectbox("Setor", ["Todos"] + unique_sectors)
     with c3:
+        st.space("small")
         sel_status = st.selectbox("Status", ["Todos"] + list(STATUS_COLORS.keys()))
 
     st.markdown("<div style='margin-bottom: 25px'></div>", unsafe_allow_html=True)
