@@ -34,6 +34,10 @@ def render_dashboard(dm):
     mask_real = (df_all['item_number'].str.contains(r'\.', regex=True)) & (~df_all['item_number'].str.endswith('.0'))
     df_raw = df_all[mask_real].copy()
 
+    df_raw['stage'] = df_raw['stage'].fillna("GERAL")
+    df_raw['sector'] = df_raw['sector'].fillna("NÃO DEFINIDO")
+    df_raw['responsible'] = df_raw['responsible'].fillna("NÃO ATRIBUÍDO")
+
     projects_list = sorted(df_raw['project_name'].unique().tolist())
     c_filter, _ = st.columns([1, 3])
     with c_filter:
@@ -49,25 +53,14 @@ def render_dashboard(dm):
     st.markdown(f"##### Visão Geral")
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
     
-    df['item_number'] = df['item_number'].astype(str).str.strip()
-    
-    mask_activities = (
-        (df['item_number'].str.contains(r'\.', regex=True)) & 
-        (~df['item_number'].str.endswith('.0'))
-    )
-    
-    df_calc = df[mask_activities]
-    
+  
     total = len(df_calc)
-    
     if total > 0:
         done = len(df_calc[df_calc['status'].isin(['SIM', 'NÃO SE APLICA'])])
         pending = len(df_calc[df_calc['status'] == 'PENDENTE'])
         progresso = int((done / total) * 100)
     else:
-        done = 0
-        pending = 0
-        progresso = 0
+        done, pending, progresso = 0, 0, 0
     
     k1, k2, k3, k4 = st.columns(4)
     
@@ -158,13 +151,14 @@ def render_dashboard(dm):
     
     with c1:
         st.markdown("#### Pareto de Gargalos")
-        st.caption("Princípio 80/20: Identifique onde focar para destravar a obra.")
+        st.caption("Foco em atividades pendentes.")
         
         df_pending = df_calc[df_calc['status'] == 'PENDENTE']
         
         if not df_pending.empty:
             pareto_data = df_pending['sector'].value_counts().reset_index()
             pareto_data.columns = ['Setor', 'Qtd']
+            pareto_data['Setor'] = pareto_data['Setor'].astype(str)
             pareto_data['Acumulado'] = pareto_data['Qtd'].cumsum() / pareto_data['Qtd'].sum() * 100
             
             fig = go.Figure()
@@ -175,7 +169,8 @@ def render_dashboard(dm):
                 yaxis2=dict(overlaying='y', side='right', range=[0, 110], showgrid=False),
                 paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
                 font=dict(family="Inter", color="#cbd5e1"),
-                margin=dict(t=10, l=0, r=0, b=0), legend=dict(orientation="h", y=1.1)
+                margin=dict(t=10, l=0, r=0, b=0), legend=dict(orientation="h", y=1.1),
+                xaxis=dict(showgrid=False)
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
@@ -185,23 +180,27 @@ def render_dashboard(dm):
         st.markdown("#### Performance por Etapa")
         
         stage_stats = []
-        df_calc['stage'] = df_calc['stage'].fillna("GERAL")
-        
         for stg in df_calc['stage'].unique():
             s_df = df_calc[df_calc['stage'] == stg]
             s_total = len(s_df)
             if s_total == 0: continue
             s_done = len(s_df[s_df['status'].isin(['SIM', 'NÃO SE APLICA'])])
             s_pct = (s_done/s_total) * 100
-            stage_stats.append({'Etapa': stg, 'Progresso': s_pct})
+            stage_stats.append({'Etapa': str(stg), 'Progresso': s_pct}) 
             
         df_stage = pd.DataFrame(stage_stats).sort_values('Progresso')
         
         if not df_stage.empty:
-            fig_bar = px.bar(df_stage, x='Progresso', y='Etapa', orientation='h', text=df_stage['Progresso'].apply(lambda x: f"{int(x)}%"), color='Progresso', color_continuous_scale=['#334155', '#22c55e'])
-            fig_bar = update_fig_layout(fig_bar)
-            fig_bar.update_layout(coloraxis_showscale=False, yaxis=dict(autorange="reversed"))
+            fig_bar = px.bar(
+                df_stage, x='Progresso', y='Etapa', orientation='h',
+                text=df_stage['Progresso'].apply(lambda x: f"{int(x)}%"),
+                color='Progresso', color_continuous_scale=['#334155', '#22c55e']
+            )
+            fig_bar = style_chart(fig_bar)
+            fig_bar.update_yaxes(autorange="reversed")
             st.plotly_chart(fig_bar, use_container_width=True)
+        else:
+            st.info("Sem dados de etapas.")
 
     st.markdown("---")
 
@@ -214,7 +213,6 @@ def render_dashboard(dm):
         group_col = "sector"
         x_label = "Setor"
 
-    df_calc['responsible'] = df_calc['responsible'].fillna("NÃO DEFINIDO")
     df_heat = df_calc[df_calc['status'] == 'PENDENTE'].groupby([group_col, 'responsible']).size().reset_index(name='Qtd')
     
     if not df_heat.empty:
