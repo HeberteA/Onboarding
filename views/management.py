@@ -4,8 +4,8 @@ import textwrap
 
 STATUS_COLORS = {
     "SIM": "#35BE53",         
-    "PENDENTE": "#f59e0b",     
-    "ANDAMENTO": "#3b82f6",   
+    "PENDENTE": "#f59e0b",      
+    "ANDAMENTO": "#3b82f6",    
     "NÃO SE APLICA": "#65686b" 
 }
 
@@ -57,11 +57,19 @@ div[data-testid="column"] {
     if df.empty:
         st.info("Nenhuma atividade cadastrada.")
         return
+    df['status'] = df['status'].astype(str).str.strip().str.upper()
+    df['status'] = df['status'].replace({
+        'NAO SE APLICA': 'NÃO SE APLICA',
+        'NAO INICIADO': 'NÃO INICIADO',
+        'CONCLUIDO': 'SIM',
+        'OK': 'SIM'
+    })
 
     df_activities = df[
         (df['item_number'].astype(str).str.contains(r'\.', regex=True)) & 
         (~df['item_number'].astype(str).str.endswith('.0'))
     ]
+    
     total_global = len(df_activities)
     
     if total_global > 0:
@@ -86,10 +94,11 @@ div[data-testid="column"] {
 
     st.markdown("<div style='margin-bottom: 25px'></div>", unsafe_allow_html=True)
 
-    hero_bar_color = "#22c55e" if pct_global == 100 else "#3b82f6"
+    hero_bar_color = "#35BE53" if pct_global == 100 else "#3b82f6"
 
-    st.markdown(f"""
-    <div style="background-color: transparent !important; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.9) !important; ">
+    # HTML CORRIGIDO (Dedent para evitar erro de renderização)
+    st.markdown(textwrap.dedent(f"""
+    <div style="background-color: transparent !important; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.9) !important; padding: 20px; border-radius: 10px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
             <div>
                 <div style="font-size: 0.75rem; color: #FFFFFF; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">Status Geral da Obra</div>
@@ -111,9 +120,10 @@ div[data-testid="column"] {
             <div style="width: {pct_global}%; height: 100%; background-color: {hero_bar_color}; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px {hero_bar_color}80;"></div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """), unsafe_allow_html=True)
 
-    st.space("small")
+    st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+
     df['root_id'] = df['item_number'].astype(str).apply(lambda x: x.split('.')[0])
     unique_roots = sorted(df['root_id'].unique(), key=lambda x: int(x) if x.isdigit() else 999)
 
@@ -156,7 +166,7 @@ div[data-testid="column"] {
             border_color = "#3b82f6" 
             progress_bar_color = "#3b82f6"
 
-        html_card = f"""
+        html_card = textwrap.dedent(f"""
 <div style="background-color: transparent !important; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid {border_color}; border-radius: 8px; padding: 15px 20px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px);">
     <div style="font-weight: 600; color: #ffffff; font-size: 1.05rem; letter-spacing: 0.5px; flex-grow: 1;">
         {phase_label}
@@ -182,7 +192,7 @@ div[data-testid="column"] {
         </div>
     </div>
 </div>
-"""
+""")
         st.markdown(html_card, unsafe_allow_html=True)
         st.markdown("")
 
@@ -215,6 +225,7 @@ div[data-testid="column"] {
 
                         if tags:
                             st.markdown(f"<div style='margin-top:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;'>{''.join(tags)}</div>", unsafe_allow_html=True)
+                    
                     with c_act:
                         key_unique = f"st_{project_id}_{row['task_id']}"
                         opts = list(STATUS_COLORS.keys())
