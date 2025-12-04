@@ -23,16 +23,18 @@ class DataManager:
         if not self._engine: return pd.DataFrame()
         query = text("""
             SELECT 
-                t.id as task_id,
-                t.item_number,
-                t.title,
-                t.description,
-                t.area,
+                p.title as phase_title,  -- Nome real da fase (Ex: CONTRATOS)
+                t.id as task_id, 
+                t.item_number, 
+                t.title, 
+                t.description, 
+                t.area, 
                 t.stage,
-                s.name as sector,
-                r.name as responsible,
+                s.name as sector, 
+                r.name as responsible, 
                 COALESCE(pt.status, 'NÃO INICIADO') as status
             FROM tasks t
+            JOIN phases p ON t.phase_id = p.id  -- Vínculo com a fase
             LEFT JOIN sectors s ON t.sector_id = s.id
             LEFT JOIN responsibles r ON t.default_responsible_id = r.id
             LEFT JOIN project_tasks pt ON t.id = pt.task_id AND pt.project_id = :pid
