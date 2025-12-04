@@ -167,7 +167,7 @@ def render_dashboard(dm):
             
             fig = go.Figure()
             fig.add_trace(go.Bar(x=pareto_data['Setor'], y=pareto_data['Qtd'], name='Pendências', text=pareto_data['Qtd'], marker_color='#E37026', opacity=0.8))
-            fig.add_trace(go.Scatter(x=pareto_data['Setor'], y=pareto_data['Acumulado'], name='Impacto %', text=pareto_data['Impacto %'], yaxis='y2', line=dict(color='#3b82f6', width=2), mode='lines+markers'))
+            fig.add_trace(go.Scatter(x=pareto_data['Setor'], y=pareto_data['Acumulado'], name='Impacto %', text=pareto_data['Acumulado'], yaxis='y2', line=dict(color='#3b82f6', width=2), mode='lines+markers'))
             
             fig.update_layout(
                 yaxis2=dict(overlaying='y', side='right', range=[0, 110], showgrid=False),
