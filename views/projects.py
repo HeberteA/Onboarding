@@ -71,7 +71,7 @@ def render_projects(dm):
                             </div>
                             <div>
                             </div>
-                                <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">
+                                <div style="font-size:0.8rem; color:#888; margin-bottom:8px;">
                                     <span>Progresso</span>
                                     <span>{done}/{total}</span>
                                 <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; margin-bottom:5px;">
