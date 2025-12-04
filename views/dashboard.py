@@ -80,7 +80,7 @@ def render_dashboard(dm):
     
     with k1: st.markdown(metric_card("Total", total, "Atividades", "#888"), unsafe_allow_html=True)
     with k2: st.markdown(metric_card("Progresso", f"{progresso}%", f"{done} Concluídos", "#22c55e"), unsafe_allow_html=True)
-    with k3: st.markdown(metric_card("A Fazer", pending, "Ativos / Pendentes", "#f59e0b"), unsafe_allow_html=True)
+    with k3: st.markdown(metric_card("A Fazer", pending, "Andamento / Pendentes", "#f59e0b"), unsafe_allow_html=True)
     
     df_not_done = df_calc[~df_calc['status'].isin(['SIM', 'NÃO SE APLICA'])]
 
@@ -88,7 +88,7 @@ def render_dashboard(dm):
         risk_proj = df_not_done['project_name'].value_counts()
         top_risk = risk_proj.index[0] if not risk_proj.empty else "Nenhuma"
         val_risk = risk_proj.iloc[0] if not risk_proj.empty else 0
-        lbl_risk = "Obra com Mais Ações"
+        lbl_risk = "Obra com Mais Pendências"
     else:
         risk_sec = df_not_done['sector'].value_counts()
         top_risk = risk_sec.index[0] if not risk_sec.empty else "Nenhum"
