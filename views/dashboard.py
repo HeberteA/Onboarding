@@ -9,14 +9,16 @@ COLOR_MAP = {
     "ENTRADA": "#8b5cf6", "NÃO INICIADO": "#64748b", "NÃO SE APLICA": "#334155"
 }
 
-def update_fig_layout(fig):
+def style_chart(fig):
+    """Padroniza o estilo dos gráficos para Dark Mode e ajusta layout"""
     fig.update_layout(
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
         font=dict(family="Inter", color="#cbd5e1"),
         margin=dict(t=30, l=0, r=0, b=0),
-        xaxis=dict(showgrid=False, showticklabels=False),
+        xaxis=dict(showgrid=False, showticklabels=True),
         yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)'),
+        coloraxis_showscale=False
     )
     return fig
 
@@ -165,7 +167,7 @@ def render_dashboard(dm):
             
             fig = go.Figure()
             fig.add_trace(go.Bar(x=pareto_data['Setor'], y=pareto_data['Qtd'], name='Pendências', text=pareto_data['Qtd'], marker_color='#E37026', opacity=0.8))
-            fig.add_trace(go.Scatter(x=pareto_data['Setor'], y=pareto_data['Acumulado'], name='Impacto %', yaxis='y2', line=dict(color='#3b82f6', width=2), mode='lines+markers'))
+            fig.add_trace(go.Scatter(x=pareto_data['Setor'], y=pareto_data['Acumulado'], name='Impacto %', text=pareto_data['Impacto %'], yaxis='y2', line=dict(color='#3b82f6', width=2), mode='lines+markers'))
             
             fig.update_layout(
                 yaxis2=dict(overlaying='y', side='right', range=[0, 110], showgrid=False),
