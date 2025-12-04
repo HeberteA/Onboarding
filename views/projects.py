@@ -23,16 +23,14 @@ def render_projects(dm):
         
         /* Badge de Categoria */
         .category-badge {
-            font-size: 0.65rem;
-            text-transform: uppercase;
+            background: rgba(227, 112, 38, 0.15); 
+            border: 1px solid rgba(227, 112, 38, 0.5); 
+            color: #E37026; 
+            padding: 4px 12px; 
+            border-radius: 5px; 
+            font-size: 0.75rem; 
+            font-weight: 600; 
             letter-spacing: 1px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            background: rgba(255,255,255,0.1);
-            color: #ccc;
-            border: 1px solid rgba(255,255,255,0.1);
-            display: inline-block;
-            margin-bottom: 10px;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -62,7 +60,7 @@ def render_projects(dm):
                     with st.container():
                         st.markdown(textwrap.dedent(f"""
                         <div class="project-card">
-                            <div style="background: rgba(227, 112, 38, 0.15); border: 1px solid rgba(227, 112, 38, 0.5); color: #E37026; padding: 4px 12px; border-radius: 5px; font-size: 0.75rem;  letter-spacing: 1px;"></div>
+                            <div style="display:flex; justify-content:space-between; align-items:start;">
                                 <span class="category-badge">{row['category']}</span>
                                 <span style="font-weight:700; color:{bar_color};">{pct}%</span>
                             </div>
