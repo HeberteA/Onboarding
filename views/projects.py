@@ -95,7 +95,7 @@ def render_projects(dm):
             with col_b:
                 new_cat = st.selectbox("Categoria", PROJECT_TYPES)
             
-            submitted = st.form_submit_button("🚀 Criar Obra", type="primary")
+            submitted = st.form_submit_button("Criar Obra", type="primary")
             
             if submitted:
                 if not new_name:
