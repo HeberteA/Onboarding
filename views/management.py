@@ -76,7 +76,7 @@ div[data-testid="column"] {
             <span style="font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--primary); text-transform: uppercase; letter-spacing: 3px; text-transform: uppercase;">GERENCIAMENTO DE OBRA</span>
             <div style="display: flex; align-items: center; gap: 15px; margin-top: 5px;">
                 <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 3.75rem; color: white; letter-spacing: 2px; letter-spacing: 1px;">{project_name}</span>
-                <span style="background: rgba(227, 112, 38, 0.15); border: 1px solid rgba(227, 112, 38, 0.5); color: #E37026; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px;">{category}</span>
+                <span style="background: rgba(227, 112, 38, 0.15); border: 1px solid rgba(227, 112, 38, 0.5); color: #E37026; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px;">{category}</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
