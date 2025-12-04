@@ -74,7 +74,7 @@ def render_projects(dm):
                         </div>
                         """), unsafe_allow_html=True)
                         
-                        c_edit, _, _, c_del = st.columns([1.5, 2, 2, 1.5])
+                        c_edit, _, _, c_del = st.columns([1.75, 2, 2, 1.75])
                         
                         with c_edit:
                             if st.button("Editar", key=f"edit_{row['id']}", use_container_width=True):
