@@ -64,12 +64,15 @@ def render_projects(dm):
                                 <span style="font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:5px;">{row['name']}</span>
                                 <span style="font-weight:700; color:{bar_color};">{pct}%</span>
                             </div>
+                            
                                 <span class="category-badge">{row['category']}</span>
-                                </div>
-                                <div style="font-size:0.8rem; color:#888; margin-bottom:15px;">
-                                    {done}/{total} atividades concluídas
-                                <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; margin-bottom:15px;">
-                                    <div style="width:{pct}%; height:100%; background:{bar_color};"></div>
+                            
+                            </div>
+                            <div style="font-size:0.8rem; color:#888; margin-bottom:15px;">
+                                {done}/{total} atividades concluídas
+                                
+                            <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; margin-bottom:15px;">
+                                <div style="width:{pct}%; height:100%; background:{bar_color};"></div>
                             </div>
                         </div>
                         """), unsafe_allow_html=True)
