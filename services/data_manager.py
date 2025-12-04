@@ -121,3 +121,56 @@ class DataManager:
                     exists = conn.execute(text(f"SELECT 1 FROM {table} WHERE name=:n"), {"n": name}).scalar()
                     if not exists:
                         conn.execute(text(f"INSERT INTO {table} (name) VALUES (:n)"), {"n": name})
+
+    def get_projects_summary(self):
+        """
+        Retorna lista de projetos com Categoria e Progresso calculado no SQL.
+        Performance Sênior: 1 Query única em vez de N queries.
+        """
+        if not self._engine: return pd.DataFrame()
+        query = text("""
+            SELECT 
+                p.id, 
+                p.name, 
+                COALESCE(p.category, 'NÃO DEFINIDO') as category,
+                COUNT(pt.task_id) as total_tasks,
+                COUNT(CASE WHEN pt.status IN ('SIM', 'NÃO SE APLICA') THEN 1 END) as done_tasks
+            FROM projects p
+            LEFT JOIN project_tasks pt ON p.id = pt.project_id
+            GROUP BY p.id, p.name, p.category
+            ORDER BY p.name
+        """)
+        with self._engine.connect() as conn:
+            return pd.read_sql(query, conn)
+
+    def save_project(self, name, category, project_id=None):
+        """Cria ou Atualiza um projeto"""
+        if not self._engine: return False
+        
+        name = name.strip().upper()
+        category = category.strip().upper()
+        
+        try:
+            with self._engine.begin() as conn:
+                if project_id:
+                    conn.execute(text("UPDATE projects SET name=:n, category=:c WHERE id=:id"), 
+                                 {"n": name, "c": category, "id": project_id})
+                else:
+                    conn.execute(text("INSERT INTO projects (name, category) VALUES (:n, :c)"), 
+                                 {"n": name, "c": category})
+            return True
+        except Exception as e:
+            st.error(f"Erro ao salvar: {e}")
+            return False
+
+    def delete_project(self, project_id):
+        """Exclui projeto e seus vínculos (Cuidado!)"""
+        if not self._engine: return False
+        try:
+            with self._engine.begin() as conn:
+                conn.execute(text("DELETE FROM project_tasks WHERE project_id=:id"), {"id": project_id})
+                conn.execute(text("DELETE FROM projects WHERE id=:id"), {"id": project_id})
+            return True
+        except Exception as e:
+            st.error(f"Erro ao excluir: {e}")
+            return False
