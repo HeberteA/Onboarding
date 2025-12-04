@@ -72,7 +72,7 @@ def render_dashboard(dm):
     
     def metric_card(label, val, sub, color):
         return f"""
-        <div style="background-color: transparent; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%); border-radius:10px; padding:15px;">
+        <div style="background-color: transparent; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius:10px; padding:15px;">
             <div style="color:#888; font-size:0.75rem; text-transform:uppercase;">{label}</div>
             <div style="color:#fff; font-size:1.8rem; font-weight:700;">{val}</div>
             <div style="color:{color}; font-size:0.85rem;">{sub}</div>
