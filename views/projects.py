@@ -61,11 +61,11 @@ def render_projects(dm):
                         st.markdown(textwrap.dedent(f"""
                         <div class="project-card">
                             <div style="display:flex; justify-content:space-between; align-items:start;">
-                                <div style="font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:5px;">{row['name']}</div>
+                                <span style="font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:5px;">{row['name']}</span>
                                 <span style="font-weight:700; color:{bar_color};">{pct}%</span>
                             </div>
                             
-                            <span class="category-badge">{row['category']}</span>
+                            <div class="category-badge">{row['category']}</div>
                             <div style="font-size:0.8rem; color:#888; margin-bottom:15px;">
                                 {done}/{total} atividades concluídas
                             </div>
