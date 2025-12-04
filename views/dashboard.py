@@ -23,27 +23,28 @@ def render_dashboard(dm):
     
     df_all = dm.get_global_dashboard_data()
     if df_all.empty:
-        st.info("Nenhum dado encontrado.")
+        st.info("Aguardando dados.")
         return
 
-    df_all['status'] = df_all['status'].astype(str).str.strip().str.upper()
-    df_all['status'] = df_all['status'].replace({
-        'NAO SE APLICA': 'NÃO SE APLICA',
-        'NAO INICIADO': 'NÃO INICIADO',
-        'CONCLUIDO': 'SIM',
-        'OK': 'SIM'
+    df_all['status'] = df_all['status'].astype(str).str.strip().str.upper().replace({
+        'NAO SE APLICA': 'NÃO SE APLICA', 'NAO INICIADO': 'NÃO INICIADO', 'CONCLUIDO': 'SIM', 'OK': 'SIM'
     })
-    projects_list = sorted(df_all['project_name'].unique().tolist())
     
+    df_all['item_number'] = df_all['item_number'].astype(str).str.strip()
+    mask_real = (df_all['item_number'].str.contains(r'\.', regex=True)) & (~df_all['item_number'].str.endswith('.0'))
+    df_raw = df_all[mask_real].copy()
+
+    projects_list = sorted(df_raw['project_name'].unique().tolist())
     c_filter, _ = st.columns([1, 3])
     with c_filter:
-        sel_project = st.selectbox("Filtrar Obra", ["Todas as Obras"] + projects_list)
+        sel_project = st.selectbox("Escopo da Análise", ["Todas as Obras"] + projects_list)
 
     if sel_project != "Todas as Obras":
-        df = df_all[df_all['project_name'] == sel_project].copy()
-        title_suffix = f": {sel_project}"
+        df_calc = df_raw[df_raw['project_name'] == sel_project]
     else:
-        df = df_all.copy()
+        df_calc = df_raw
+
+    st.markdown("---")
         
     st.markdown(f"##### Visão Geral")
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
@@ -153,6 +154,82 @@ def render_dashboard(dm):
         else:
             st.success("Sem pendências críticas.")
 
+    c1, c2 = st.columns([1.5, 1])
+    
+    with c1:
+        st.markdown("#### Pareto de Gargalos")
+        st.caption("Princípio 80/20: Identifique onde focar para destravar a obra.")
+        
+        df_pending = df_calc[df_calc['status'] == 'PENDENTE']
+        
+        if not df_pending.empty:
+            pareto_data = df_pending['sector'].value_counts().reset_index()
+            pareto_data.columns = ['Setor', 'Qtd']
+            pareto_data['Acumulado'] = pareto_data['Qtd'].cumsum() / pareto_data['Qtd'].sum() * 100
+            
+            fig = go.Figure()
+            fig.add_trace(go.Bar(x=pareto_data['Setor'], y=pareto_data['Qtd'], name='Pendências', marker_color='#E37026', opacity=0.8))
+            fig.add_trace(go.Scatter(x=pareto_data['Setor'], y=pareto_data['Acumulado'], name='Impacto %', yaxis='y2', line=dict(color='#3b82f6', width=2), mode='lines+markers'))
+            
+            fig.update_layout(
+                yaxis2=dict(overlaying='y', side='right', range=[0, 110], showgrid=False),
+                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(family="Inter", color="#cbd5e1"),
+                margin=dict(t=10, l=0, r=0, b=0), legend=dict(orientation="h", y=1.1)
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.success("Sem gargalos pendentes.")
+
+    with c2:
+        st.markdown("#### Performance por Etapa")
+        
+        stage_stats = []
+        df_calc['stage'] = df_calc['stage'].fillna("GERAL")
+        
+        for stg in df_calc['stage'].unique():
+            s_df = df_calc[df_calc['stage'] == stg]
+            s_total = len(s_df)
+            if s_total == 0: continue
+            s_done = len(s_df[s_df['status'].isin(['SIM', 'NÃO SE APLICA'])])
+            s_pct = (s_done/s_total) * 100
+            stage_stats.append({'Etapa': stg, 'Progresso': s_pct})
+            
+        df_stage = pd.DataFrame(stage_stats).sort_values('Progresso')
+        
+        if not df_stage.empty:
+            fig_bar = px.bar(df_stage, x='Progresso', y='Etapa', orientation='h', text=df_stage['Progresso'].apply(lambda x: f"{int(x)}%"), color='Progresso', color_continuous_scale=['#334155', '#22c55e'])
+            fig_bar = update_fig_layout(fig_bar)
+            fig_bar.update_layout(coloraxis_showscale=False, yaxis=dict(autorange="reversed"))
+            st.plotly_chart(fig_bar, use_container_width=True)
+
+    st.markdown("---")
+
+    st.markdown("#### Mapa de Calor: Responsáveis")
+    
+    if sel_project == "Todas as Obras":
+        group_col = "project_name"
+        x_label = "Obra"
+    else:
+        group_col = "sector"
+        x_label = "Setor"
+
+    df_calc['responsible'] = df_calc['responsible'].fillna("NÃO DEFINIDO")
+    df_heat = df_calc[df_calc['status'] == 'PENDENTE'].groupby([group_col, 'responsible']).size().reset_index(name='Qtd')
+    
+    if not df_heat.empty:
+        heatmap_data = df_heat.pivot(index='responsible', columns=group_col, values='Qtd').fillna(0)
+        fig_heat = px.imshow(
+            heatmap_data, labels=dict(x=x_label, y="Responsável", color="Pendências"),
+            color_continuous_scale='Magma', aspect="auto"
+        )
+        fig_heat.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(family="Inter", color="#cbd5e1"), margin=dict(t=10, l=0, r=0, b=0))
+        st.plotly_chart(fig_heat, use_container_width=True)
+    else:
+        st.info("Dados insuficientes para mapa de calor.")
+
     st.markdown("#### Radar de Atividades")
     risk_table = df_calc[df_calc['status'] == 'PENDENTE'][['project_name', 'stage', 'responsible', 'status']].head(10)
     st.dataframe(risk_table, use_container_width=True, hide_index=True)
+
+
