@@ -188,6 +188,7 @@ div[data-testid="column"] {
 </div>
 """)
         st.markdown(html_card, unsafe_allow_html=True)
+        st.markdown("")
 
         with st.expander("Ver atividades", expanded=False):
             for _, row in filtered_children.iterrows():
