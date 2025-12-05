@@ -188,7 +188,7 @@ div[data-testid="column"] {
 </div>
 """)
         st.markdown(html_card, unsafe_allow_html=True)
-        st.markdown("<div style='margin-bottom: 5px'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-bottom: 2px'></div>", unsafe_allow_html=True)
 
         with st.expander("Ver atividades", expanded=False):
             for _, row in filtered_children.iterrows():
