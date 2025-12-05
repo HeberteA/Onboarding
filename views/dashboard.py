@@ -200,7 +200,7 @@ def render_dashboard(dm):
             fig_bar = px.bar(
                 df_stage, x='Progresso', y='Etapa', orientation='h',
                 text=df_stage['Progresso'].apply(lambda x: f"{int(x)}%"), 
-                color='Progresso', color_continuous_scale=['#ccc', '#22c55e']
+                color='Progresso', color_continuous_scale=['#47362c', '#ff6400']
             )
             fig_bar = style_chart(fig_bar) 
             fig_bar.update_yaxes(autorange="reversed")
