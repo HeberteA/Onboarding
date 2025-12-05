@@ -55,7 +55,7 @@ def render_projects(dm):
                 done = row['done_tasks']
                 pct = int((done / total) * 100) if total > 0 else 0
                 
-                bar_color = "#22c55e" if pct == 100 else "#3b82f6"
+                bar_color = "#22c55e" if pct == 100 else "#E37026"
                 
                 col = cols[index % 3]
                 
