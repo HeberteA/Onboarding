@@ -91,7 +91,7 @@ div[data-testid="column"] {
 
     st.markdown("<div style='margin-bottom: 25px'></div>", unsafe_allow_html=True)
 
-    hero_bar_color = "#35BE53" if pct_global == 100 else "#3b82f6"
+    hero_bar_color = "#35BE53" if pct_global == 100 else "#E37026"
 
     st.markdown(textwrap.dedent(f"""
     <div style="background-color: transparent !important; background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%) !important; border: 1px solid rgba(255, 255, 255, 0.9) !important;">
