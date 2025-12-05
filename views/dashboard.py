@@ -123,7 +123,7 @@ def render_dashboard(dm):
             fig = px.bar(
                 df_proj, x='Progresso', y='Obra', orientation='h',
                 text=df_proj['Progresso'].apply(lambda x: f"{int(x)}%"),
-                color='Progresso', color_continuous_scale=['#333', '#3b82f6']
+                color='Progresso', color_continuous_scale=['#333', '#E37026']
             )
             fig = style_chart(fig)
             fig.update_layout(coloraxis_showscale=False)
