@@ -60,9 +60,56 @@ st.markdown("""
     
     /* Remove padding excessivo do topo */
     .block-container { padding-top: 2rem; }
+
+    /* Login Style */
+    .login-container {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(227, 112, 38, 0.2);
+        padding: 40px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    div.stButton > button {
+        background-color: #E37026 !important;
+        color: white !important;
+        border: none !important;
+        font-weight: 600 !important;
+    }
+</style>
 </style>
 """, unsafe_allow_html=True)
 
+def login_screen():
+    c1, c2, c3 = st.columns([1, 1, 1])
+    
+    with c2:
+        st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="login-container">
+            <h2 style='color:#E37026; margin-bottom: 0px;'>LAVIE</h2>
+            <p style='color:#888; font-size: 0.8rem; letter-spacing: 2px;'>SISTEMA DE GESTÃO</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        with st.form("login"):
+            username = st.text_input("Usuário", placeholder="Digite seu usuário")
+            password = st.text_input("Senha", type="password", placeholder="Digite sua senha")
+            
+            if st.form_submit_button("ENTRAR", use_container_width=True):
+                if "passwords" in st.secrets:
+                    if username in st.secrets["passwords"] and st.secrets["passwords"][username] == password:
+                        st.session_state['logged_in'] = True
+                        st.session_state['username'] = username
+                        st.toast(f"Bem-vindo, {username}!", icon="🔓")
+                        time.sleep(0.5)
+                        st.rerun()
+                    else:
+                        st.error("Usuário ou senha incorretos.")
+                else:
+                    st.error("Erro de configuração: Secrets não encontrado.")
+                    
 def main():
     dm = DataManager()
 
@@ -141,4 +188,10 @@ def main():
         render_settings(dm)
 
 if __name__ == "__main__":
-    main()
+    if 'logged_in' not in st.session_state:
+        st.session_state['logged_in'] = False
+
+    if not st.session_state['logged_in']:
+        login_screen()
+    else:
+        main_app()
