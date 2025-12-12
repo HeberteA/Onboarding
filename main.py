@@ -79,8 +79,11 @@ st.markdown("""
     }
     
     .minha-imagem {
-        width: 200px; /* Largura */
-        height: 100px; /* Mantém a proporção */
+        width: 160px; 
+        margin-bottom: 20px; 
+        display: block; 
+        margin-left: auto; 
+        margin-right: auto;
     }
 </style>
 """, unsafe_allow_html=True)
