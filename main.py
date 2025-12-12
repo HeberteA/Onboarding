@@ -137,7 +137,7 @@ def login_screen():
                     else:
                         st.error("Senha incorreta.")
                 else:
-                    st.error("Erro: Arquivo de senhas não configurado.")
+                    st.error("Erro: Secrets não configurado.")
                     
 def main():
     dm = DataManager()
