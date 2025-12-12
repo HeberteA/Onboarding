@@ -63,7 +63,6 @@ st.markdown("""
 
     /* Login Style */
     .login-container {
-        background-image: url('caminho/para/sua/imagem.jpg');
         background-color: transparent; 
         background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -80,8 +79,8 @@ st.markdown("""
     }
     
     .minha-imagem {
-        width: 100px; /* Largura */
-        height: 50px; /* Mantém a proporção */
+        width: 200px; /* Largura */
+        height: 100px; /* Mantém a proporção */
     }
 </style>
 """, unsafe_allow_html=True)
@@ -93,7 +92,7 @@ def login_screen():
         st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
         st.markdown("""
         <div class="login-container">
-            <img src="Lavie.png"; class="minha-imagem">
+            <img src="https://github.com/HeberteA/Onboarding/blob/581c649586a4430203631afdf9367cbdc70d5b30/Lavie.png"; class="minha-imagem">
             <h2 style='color:#E37026; margin-bottom: 0px;'>ONBOARDING</h2>
             <p style='color:#888; font-size: 0.8rem; letter-spacing: 2px;'>Gestão de Obras</p>
         </div>
