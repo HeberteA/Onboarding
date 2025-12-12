@@ -132,7 +132,6 @@ def login_screen():
                         st.session_state['logged_in'] = True
                         st.session_state['username'] = found_user.capitalize()
                         st.toast(f"Bem-vindo, {found_user.capitalize()}!", icon="🔓")
-                        time.sleep(0.5)
                         st.rerun()
                     else:
                         st.error("Senha incorreta.")
