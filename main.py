@@ -98,13 +98,17 @@ st.markdown("""
 def login_screen():
     c1, c2, c3 = st.columns([1, 1, 1])
     logo_file = "Lavie.png" if os.path.exists("Lavie.png") else "Lavie.jpg"
-    img_b64 = get_base64_image(logo_file)
-    mime_type = "image/png" if logo_file.endswith(".png") else "image/jpeg"
-    with c2:
-        st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
-        st.markdown("""
+        img_b64 = get_base64_image(logo_file)
+        
+        if img_b64:
+            mime_type = "image/png" if logo_file.endswith(".png") else "image/jpeg"
+            header_html = f'<img src="data:{mime_type};base64,{img_b64}" style="width: 150px; height: auto; display: block; margin: 0 auto 20px auto;">'
+        else:
+            header_html = "<h2 style='color:#E37026; margin-bottom: 10px;'>LAVIE</h2>"
+
+        st.markdown(f"""
         <div class="login-container">
-            <img src="data:{mime_type};base64,{img_b64}"; class="minha-imagem">
+            {header_html}
             <h2 style='color:#E37026; margin-bottom: 0px;'>ONBOARDING</h2>
             <p style='color:#E37026; font-size: 0.8rem; letter-spacing: 2px;'>Gestão de Obras</p>
         </div>
