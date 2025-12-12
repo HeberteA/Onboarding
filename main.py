@@ -196,6 +196,11 @@ def main():
         
         st.markdown("---")
         
+        st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
+        if st.button("Sair", use_container_width=True):
+            st.session_state['logged_in'] = False
+            st.rerun()
+        
         st.markdown("""
             <div style="position: fixed; bottom: 20px; width: 100%; text-align: center; color: #475569; font-size: 0.7rem;">
                 Onboarding • Lavie System
