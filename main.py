@@ -63,6 +63,7 @@ st.markdown("""
 
     /* Login Style */
     .login-container {
+        background-image: url('caminho/para/sua/imagem.jpg');
         background-color: transparent; 
         background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -77,6 +78,14 @@ st.markdown("""
         border: none !important;
         font-weight: 600 !important;
     }
+    
+    .minha-imagem {
+        width: 100px; /* Largura */
+        height: auto; /* Mantém a proporção */
+        display: block; /* Para centralizar ou controlar */
+        margin: 10px auto; /* Centraliza */
+        border-radius: 8px; /* Bordas arredondadas */
+    }
 </style>
 </style>
 """, unsafe_allow_html=True)
@@ -86,9 +95,9 @@ def login_screen():
     
     with c2:
         st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
-        st.image("Lavie.png")
         st.markdown("""
         <div class="login-container">
+            <img src="Lavie.png"; class="minha-imagem">
             <h2 style='color:#E37026; margin-bottom: 0px;'>ONBOARDING</h2>
             <p style='color:#888; font-size: 0.8rem; letter-spacing: 2px;'>Gestão de Obras</p>
         </div>
@@ -97,7 +106,6 @@ def login_screen():
         with st.form("login_simple"):
             password = st.text_input("Senha de Acesso", type="password", placeholder="••••••")
             
-            st.markdown("<br>", unsafe_allow_html=True)
             if st.form_submit_button("Entrar", use_container_width=True):
                 if "passwords" in st.secrets:
                     found_user = None
