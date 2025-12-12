@@ -98,7 +98,7 @@ st.markdown("""
 def login_screen():
     c1, c2, c3 = st.columns([1, 1, 1])
     logo_file = "Lavie.png" if os.path.exists("Lavie.png") else "Lavie.jpg"
-        img_b64 = get_base64_image(logo_file)
+    img_b64 = get_base64_image(logo_file)
         
         if img_b64:
             mime_type = "image/png" if logo_file.endswith(".png") else "image/jpeg"
