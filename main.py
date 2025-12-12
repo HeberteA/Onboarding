@@ -81,7 +81,7 @@ st.markdown("""
     
     .minha-imagem {
         width: 100px; /* Largura */
-        height: auto; /* Mantém a proporção */
+        height: 50px; /* Mantém a proporção */
     }
 </style>
 """, unsafe_allow_html=True)
