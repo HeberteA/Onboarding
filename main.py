@@ -99,6 +99,7 @@ def login_screen():
     c1, c2, c3 = st.columns([1, 1, 1])
     logo_file = "Lavie.png" if os.path.exists("Lavie.png") else "Lavie.jpg"
     img_b64 = get_base64_image(logo_file)
+    mime_type = "image/png" if logo_file.endswith(".png") else "image/jpeg"
     with c2:
         st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
         st.markdown("""
