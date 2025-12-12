@@ -65,8 +65,8 @@ st.markdown("""
     .login-container {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(227, 112, 38, 0.2);
-        padding: 40px;
-        border-radius: 12px;
+        padding: 20px;
+        border-radius: 10px;
         text-align: center;
         margin-bottom: 20px;
     }
