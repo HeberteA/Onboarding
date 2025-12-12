@@ -94,7 +94,7 @@ def login_screen():
         <div class="login-container">
             <img src="https://github.com/HeberteA/Onboarding/blob/581c649586a4430203631afdf9367cbdc70d5b30/Lavie.png"; class="minha-imagem">
             <h2 style='color:#E37026; margin-bottom: 0px;'>ONBOARDING</h2>
-            <p style='color:#888; font-size: 0.8rem; letter-spacing: 2px;'>Gestão de Obras</p>
+            <p style='color:#E37026; font-size: 0.8rem; letter-spacing: 2px;'>Gestão de Obras</p>
         </div>
         """, unsafe_allow_html=True)
         
