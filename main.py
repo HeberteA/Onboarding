@@ -76,7 +76,7 @@ st.markdown("""
         padding: 40px;
         border-radius: 10px;
         text-align: center;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
     div.stButton > button {
         background-color: #E37026 !important;
