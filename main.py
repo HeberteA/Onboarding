@@ -85,30 +85,36 @@ def login_screen():
     
     with c2:
         st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
-        
+        st.image("Lavie.png")
         st.markdown("""
         <div class="login-container">
-            <h2 style='color:#E37026; margin-bottom: 0px;'>LAVIE</h2>
-            <p style='color:#888; font-size: 0.8rem; letter-spacing: 2px;'>SISTEMA DE GESTÃO</p>
+            <h2 style='color:#E37026; margin-bottom: 0px;'>ONBOARDING</h2>
+            <p style='color:#888; font-size: 0.8rem; letter-spacing: 2px;'>Gestão de Obras</p>
         </div>
         """, unsafe_allow_html=True)
         
-        with st.form("login"):
-            username = st.text_input("Usuário", placeholder="Digite seu usuário")
-            password = st.text_input("Senha", type="password", placeholder="Digite sua senha")
+        with st.form("login_simple"):
+            password = st.text_input("Senha de Acesso", type="password", placeholder="••••••")
             
-            if st.form_submit_button("ENTRAR", use_container_width=True):
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.form_submit_button("Entrar", use_container_width=True):
                 if "passwords" in st.secrets:
-                    if username in st.secrets["passwords"] and st.secrets["passwords"][username] == password:
+                    found_user = None
+                    for user, secret_pass in st.secrets["passwords"].items():
+                        if secret_pass == password:
+                            found_user = user
+                            break
+                    
+                    if found_user:
                         st.session_state['logged_in'] = True
-                        st.session_state['username'] = username
-                        st.toast(f"Bem-vindo, {username}!", icon="🔓")
+                        st.session_state['username'] = found_user.capitalize()
+                        st.toast(f"Bem-vindo, {found_user.capitalize()}!", icon="🔓")
                         time.sleep(0.5)
                         st.rerun()
                     else:
-                        st.error("Usuário ou senha incorretos.")
+                        st.error("Senha incorreta.")
                 else:
-                    st.error("Erro de configuração: Secrets não encontrado.")
+                    st.error("Erro: Arquivo de senhas não configurado.")
                     
 def main():
     dm = DataManager()
