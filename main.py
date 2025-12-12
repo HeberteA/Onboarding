@@ -82,11 +82,7 @@ st.markdown("""
     .minha-imagem {
         width: 100px; /* Largura */
         height: auto; /* Mantém a proporção */
-        display: block; /* Para centralizar ou controlar */
-        margin: 10px auto; /* Centraliza */
-        border-radius: 8px; /* Bordas arredondadas */
     }
-</style>
 </style>
 """, unsafe_allow_html=True)
 
