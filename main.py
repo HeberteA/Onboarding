@@ -100,11 +100,11 @@ def login_screen():
     logo_file = "Lavie.png" if os.path.exists("Lavie.png") else "Lavie.jpg"
     img_b64 = get_base64_image(logo_file)
         
-        if img_b64:
-            mime_type = "image/png" if logo_file.endswith(".png") else "image/jpeg"
-            header_html = f'<img src="data:{mime_type};base64,{img_b64}" style="width: 150px; height: auto; display: block; margin: 0 auto 20px auto;">'
-        else:
-            header_html = "<h2 style='color:#E37026; margin-bottom: 10px;'>LAVIE</h2>"
+    if img_b64:
+        mime_type = "image/png" if logo_file.endswith(".png") else "image/jpeg"
+        header_html = f'<img src="data:{mime_type};base64,{img_b64}" style="width: 150px; height: auto; display: block; margin: 0 auto 20px auto;">'
+    else:
+        header_html = "<h2 style='color:#E37026; margin-bottom: 10px;'>LAVIE</h2>"
 
         st.markdown(f"""
         <div class="login-container">
