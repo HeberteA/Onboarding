@@ -67,7 +67,7 @@ st.markdown("""
         background-color: transparent; 
         background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 20px;
+        padding: 50px;
         border-radius: 10px;
         text-align: center;
         margin-bottom: 20px;
