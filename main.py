@@ -2,11 +2,18 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from services.data_manager import DataManager
 import os
+import base64
 
 from views.dashboard import render_dashboard
 from views.management import render_management
 from views.settings import render_settings
 from views.projects import render_projects
+
+def get_base64_image(image_path):
+    if not os.path.exists(image_path):
+        return None
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
 
 st.set_page_config(page_title="Lavie Onboarding", layout="wide", initial_sidebar_state="expanded", page_icon="Lavie1.png")
 
@@ -90,12 +97,13 @@ st.markdown("""
 
 def login_screen():
     c1, c2, c3 = st.columns([1, 1, 1])
-    
+    logo_file = "Lavie.png" if os.path.exists("Lavie.png") else "Lavie.jpg"
+    img_b64 = get_base64_image(logo_file)
     with c2:
         st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
         st.markdown("""
         <div class="login-container">
-            <img src="Lavie.png"; class="minha-imagem">
+            <img src="data:{mime_type};base64,{img_b64}"; class="minha-imagem">
             <h2 style='color:#E37026; margin-bottom: 0px;'>ONBOARDING</h2>
             <p style='color:#E37026; font-size: 0.8rem; letter-spacing: 2px;'>Gestão de Obras</p>
         </div>
