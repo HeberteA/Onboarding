@@ -21,9 +21,8 @@ st.markdown("""
 <style>
     /* 1. SEU ESTILO PADRÃO (BACKGROUND E INPUTS) */
     [data-testid="stAppViewContainer"] {
-        background: radial-gradient(circle at 10% 20%, #3b3b3b 0%, #000000 100%);
-        font-family: 'Inter', sans-serif;
-        color: #ffffff;
+        background: radial-gradient(circle at 10% 20%, #1e1e24 0%, #050505 90%);
+        background-attachment: fixed;
     }
 
      /* Logo Area */
