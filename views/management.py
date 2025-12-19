@@ -45,7 +45,7 @@ div[data-testid="column"] {
     background-color: transparent; 
     background-image: linear-gradient(160deg, #1e1e1f 0%, #0a0a0c 100%);
     border-radius: 6px !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
+    border: 0px solid rgba(255,255,255,0.0) !important;
     font-size: 0.85rem !important;
     min-height: 32px !important;
 }
