@@ -111,7 +111,7 @@ def login_screen():
         st.markdown(f"""
         <div class="login-container">
             {header_html}
-            <h2 style='color:#E37026; font-size: 2.75rem; margin-top: 10px; margin-bottom: 0px;'>ONBOARDING</h2>
+            <h2 style='color:#E37026; font-size: 2.7rem; margin-top: 10px; margin-bottom: 0px;'>ONBOARDING</h2>
             <p style='color:#E37026; font-size: 1.0rem; margin-top: 0px; letter-spacing: 2px;'>Gestão de Obras</p>
         </div>
         """, unsafe_allow_html=True)
