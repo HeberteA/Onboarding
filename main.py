@@ -15,7 +15,7 @@ def get_base64_image(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode()
 
-st.set_page_config(page_title="Lavie Onboarding", layout="wide", initial_sidebar_state="expanded", page_icon="Lavie1.png")
+st.set_page_config(page_title="Onboarding", layout="wide", initial_sidebar_state="expanded", page_icon="Lavie1.png")
 
 st.markdown("""
 <style>
